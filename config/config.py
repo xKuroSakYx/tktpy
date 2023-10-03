@@ -472,6 +472,7 @@ def validateTwitter(id, username):
         print("se conectpo a la base de datos")
         # creación del cursor
         cur = conexion.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS twitter (id bigint(255) not null AUTO_INCREMENT , userid bigint(255) not null, username varchar(255) not null, follow varchar(50) not null, mhash varchar(255) not null, valid int(1) not null, primary key (id))")
 
         cur.execute( "SELECT valid FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
         vTwitter = cur.fetchone()
