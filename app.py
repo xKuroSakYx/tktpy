@@ -250,8 +250,10 @@ def callback():
 
     stwitter = storeTwitter(mId, mUsername, mFollow, hash_value)
     if(stwitter):
+        print("redireccionando con true")
         return redirect('%s/?token=%s&username=%s&twitter=%s&hash=%s&twitteralert=true'%(web_url, _TOKEN_, mUsername, mFollow, hash_value))
     else:
+        print("redireccionando con error not_stored_twitter_user")
         return redirect('%s/?token=%s&twitteralert=true&error=not_stored_twitter_user'%(web_url, _TOKEN_))
     #print(json.dumps(json_response, indent=4, sort_keys=True))
 
