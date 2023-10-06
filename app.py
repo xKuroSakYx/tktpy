@@ -246,7 +246,7 @@ def callback():
     elif(isfollow == 'username_not_exist'):
         mFollow = 'notexist'
 
-    hash_value = calculate_sha256('%s %s %s'%(mId, mUsername))
+    hash_value = calculate_sha256('%s %s'%(mId, mUsername))
 
     stwitter = storeTwitter(mId, mUsername, mFollow, hash_value)
     if(stwitter):
