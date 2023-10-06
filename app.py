@@ -674,6 +674,7 @@ async def getwalletcsv():
         )
     return response
 ########################################################
+
 @app.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*" # <- You can change "*" for a domain for example "http://localhost"
