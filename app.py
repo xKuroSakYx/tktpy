@@ -237,7 +237,7 @@ def callback():
 
     jresponse = resp.json()
     isfollow = jresponse['response']
-    print(jresponse)
+    print("la respuesta de twitkt es %s"%isfollow)
 
     if(isfollow == 'username_follows'):
         mFollow = 'valid'
