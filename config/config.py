@@ -3,7 +3,7 @@ from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 from configparser import ConfigParser
 import configparser
-import os, sys
+import os, sys, csv
 #import psycopg2
 import mysql.connector
 import hashlib
@@ -353,6 +353,77 @@ def validateWallet(wallet, referido):
             conexion.close()
             print('Conexión finalizada.')
 
+def getWallets(basedir):
+    try:
+        redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
+        conexion = None
+        #params = config()
+        params = config('localdb')
+        #print(params)
+    
+        # Conexion al servidor de MySql
+        print('Conectando a la base de datos MySql...validateWallet')
+        conexion = mysql.connector.connect(**params)
+        print("se conectpo a la base de datos")
+        # creación del cursor
+        cur = conexion.cursor()
+        isexist = False
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        #cur.execute("CREATE INDEX userids ON telegram (userid)")
+        conexion.commit()
+
+        cur.execute( "SELECT wallet, paid, referidos, refpaid FROM metamask")
+
+        # Recorremos los resultados y los mostramos
+        returndata = ""
+        _token = 0
+        _ref_paid = 0
+        _ref_token = 0
+        _ref_paid_total = 0
+        isFile = False
+
+        walletlist = cur.fetchall()
+        namefile = "wallets_%s.csv" % getTime()
+        filename = os.path.join(basedir, namefile)
+        
+        with open("wallets.csv","w",encoding='UTF-8') as f:
+            writer = csv.writer(f, delimiter=",", lineterminator="\n")
+            for wallet, paid, referidos_tot, refpaid in walletlist :
+                if(paid == 1):
+                    _token = 0
+                else:
+                    _token = 30
+                
+                if(referidos_tot > (refpaid + 2)):
+                    _ref_to_paid = referidos_tot - refpaid
+                    _ref_pend_topaid = _ref_to_paid % 3
+                    _ref_paid = _ref_to_paid - _ref_pend_topaid
+                    _ref_token = (_ref_paid / 3) * 5
+                    _ref_paid_total = _ref_paid + refpaid
+
+                _token = _token + _ref_token
+
+                sql = "UPDATE metamask SET refpaid=%s, paid=1 where wallet=%s"
+                data = (_ref_paid_total, wallet)
+                cur.execute(sql, data)
+                conexion.commit()
+
+                writer.writerow([wallet, _token])
+        
+            isFile = True
+        
+        if isFile:
+            return namefile
+        else:
+            return False
+        
+    except (Exception) as error:
+        print(error)
+    finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
 def calculate_sha256(data):
     password = "ecfbeb0a78c04e5.*692a4*..e5c___69..0f9c*f1f**0cdae__f723e6346f2b8af187$@7f21d4b4$$3a0b33c1.__26afd40a$$3b**.125ce8a$$457.*b0bba"
 
@@ -495,6 +566,19 @@ def validateTwitter(id, username):
             conexion.close()
             print('Conexión finalizada.')
 
-#"08122b7065a6e80e465709a380af57c69ecde1fd27f5a05d8c1c1474f1ce27e6"
+def getTime(separador="_"):
+    timeA = datetime.now()
+    time_D = str(timeA.day)
+    if len(time_D) == 1:
+        time_D = "0%s" % time_D
+    time_M = str(timeA.month)
+    if len(time_M) == 1:
+        time_M = "0%s" % time_M
+    time_Y = str(timeA.year)
 
+    timestamp = "%s_%s_%s" % (time_D, time_M, time_Y)
+    return timestamp
+
+
+#"08122b7065a6e80e465709a380af57c69ecde1fd27f5a05d8c1c1474f1ce27e6"
 #"9bbd6b6168abcde2e492529519f91eab59210c423c2d45b3f76e4b2cf62dd0f3"

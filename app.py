@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, session, url_for, render_template
+from flask import Flask, request, redirect, session, url_for, render_template, send_file
 from flask_cors import CORS
 from telethon.errors.rpcerrorlist import PeerFloodError
 import os
@@ -6,8 +6,9 @@ import asyncio
 #import psycopg2
 import mysql.connector
 import time
+import csv
 
-from config.config import startConnection, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter
+from config.config import startConnection, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter, getWallets
 
 ######################## TWITTER OAUTH ######################
 from requests_oauthlib import OAuth1Session
@@ -16,13 +17,15 @@ import requests
 #############################################################
 
 _TOKEN_ = 'tktk9wv7I8UU26FGGhtsSyMgZv8caqygNgPVMrdDw02IZlnRhbK3s'
+_TOKEN_ADMIN_ = 'tktktsSyMgZv8caqyg9wtsSyMgZv8caqygGGhtsStsSyMgZv8caqygyMgZv8caqygNgPVMrdDw02IZlnRhbK3sMrdDw02IZlnRhbK3s'
+_USERADMIN_ = "Eric"
 _TIMEMAX_ = 600
 _TIMEMIN_ = 90
 ######################## TWITTER OAUTH ######################
 consumer_key='Gi22eaK49RxNH9uYhJquV0v4u'
 consumer_secret= 'rQJKpa4p8j8Pc1Ju9llERSDyCcj6NuKwyXrGJy4wHFYcDIU923'
 
-web_url = "http://localhost:8080"
+web_url = "https://x6nge.com"
 request_token_url = "https://api.twitter.com/oauth/request_token"
 access_token_url = "https://api.twitter.com/oauth/access_token"
 
@@ -59,6 +62,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 ######################## TWITTER OAUTH ######################
 @app.route("/", methods=["GET"])
 def index():
+    #print("el base dir %s" % (os.getcwd()+"\csv"))
     #session['8000'] = False
     #session['8001'] = False
     #session['8002'] = False
@@ -250,7 +254,6 @@ def callback():
     else:
         return {"response": "not_stored_twitter_user"}
     #print(json.dumps(json_response, indent=4, sort_keys=True))
-    
 
 #############################################################
 
@@ -599,6 +602,76 @@ async def wallet():
         status=200,
         mimetype='application/json'
     )
+    return response
+
+@app.route('/api/getwallets', methods=["GET"])
+async def getwallet():
+
+    token = request.args.get('token')
+    user = request.args.get('user')
+
+    #return {'response': 'user_ok', 'data': "okok"}
+    if(_TOKEN_ADMIN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    if(user != _USERADMIN_):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Username'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    csvWallet = getWallets(os.getcwd()+"\csv")
+
+    response = app.response_class(
+        response=json.dumps({'response': 'No Se pudo Devolver el archivo intente de nuevo'}),
+        status=200,
+        mimetype='application/json'
+    )
+
+    if csvWallet:
+        file_path = os.path.join(app.config['BASE_DIR'], csvWallet)
+        return send_file(file_path)
+    else:
+        return response
+    
+@app.route('/api/getwalletscsv', methods=["GET"])
+async def getwalletcsv():
+
+    token = request.args.get('token')
+    user = request.args.get('user')
+    day = request.args.get('day')
+    mes = request.args.get('mont')
+    year = request.args.get('year')
+
+    #return {'response': 'user_ok', 'data': "okok"}
+    if(_TOKEN_ADMIN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    if(user != _USERADMIN_):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Username'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    
+    filename = os.path.join(os.getcwd()+"\csv", "wallets_%s_%s_%s.csv" % (day, mes, year))
+    if(os.path.isfile(filename)):
+         return send_file(filename)
+    else:
+        response = app.response_class(
+            response=json.dumps({'response': 'No se pudo encontrar el archivo %s ' % filename}),
+            status=200,
+            mimetype='application/json'
+        )
     return response
 ########################################################
 @app.after_request
