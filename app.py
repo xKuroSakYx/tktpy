@@ -147,7 +147,7 @@ def callback():
             if(not session['5001']):
                 session['5001'] = True
                 #print("se envio la peticion")
-                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
+                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5001'] = False
                 if resp.status_code != 200:
                     pass
@@ -163,7 +163,7 @@ def callback():
         try:
             if(not session['5002']):
                 session['5002'] = True
-                resp = requests.get('http://localhost:5002/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
+                resp = requests.get('http://localhost:5002/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5002'] = False
                 if resp.status_code != 200:
                     pass
@@ -178,7 +178,7 @@ def callback():
         try:
             if(not session['5003']):
                 session['5003'] = True
-                resp = requests.get('http://localhost:5003/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
+                resp = requests.get('http://localhost:5003/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5003'] = False
                 if resp.status_code != 200:
                     pass
@@ -194,7 +194,7 @@ def callback():
         try:
             if(not session['5004']):
                 session['5004'] = True
-                resp = requests.get('http://localhost:5004/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
+                resp = requests.get('http://localhost:5004/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5004'] = False
                 if resp.status_code != 200:
                     pass
@@ -209,7 +209,7 @@ def callback():
         try:
             if(not session['5005']):
                 session['5005'] = True
-                resp = requests.get('http://localhost:5005/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
+                resp = requests.get('http://localhost:5005/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5005'] = False
                 if resp.status_code != 200:
                     pass
