@@ -108,7 +108,7 @@ def validUserFromDb(data, hash):
         tktid = authCode(15)
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -190,7 +190,7 @@ def storeTwitter(id, user, follow, shash):
     try:
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -220,8 +220,8 @@ def storeTwitter(id, user, follow, shash):
         sql="insert into twitter(userid, username, follow, mhash, valid) values (%s, %s, %s, %s, 0)"
         datos=(id, user, follow, shash)
         cur.execute(sql, datos)
-        print("se inserto un nuevo usuario %s"%user)
         conexion.commit()
+        print("se inserto un nuevo usuario %s"%user)
         conexion.close()
         return True
         
@@ -236,7 +236,7 @@ def validateTwitterTelegram(twitter, telegram):
     try:
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -252,7 +252,7 @@ def validateTwitterTelegram(twitter, telegram):
         print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter):
+        if(vTwitter and vTwitter is not None):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
@@ -262,7 +262,7 @@ def validateTwitterTelegram(twitter, telegram):
         if(twittervalid):
             cur.execute( "UPDATE twitter SET valid=1 where mhash=%s", (twitter,) )
             conexion.commit()
-            print("______Se teteo ese userr a valid 1 en twitter_______")
+            print("______Se seteo ese userr a valid 1 en twitter_______")
         ################################ TELEGRAM #################################
         
         # creación del cursor
@@ -276,7 +276,7 @@ def validateTwitterTelegram(twitter, telegram):
         print(vTelegram)
         telegramvalid = False
         telegramexist = False
-        if(vTelegram):
+        if(vTelegram and vTelegram is not None):
             telegramexist = True
             if(vTelegram[0] == 0):
                 telegramvalid = True
@@ -302,7 +302,7 @@ def validateWallet(wallet, referido):
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -360,7 +360,7 @@ def getWallets(basedir):
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('postgresql')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -450,7 +450,7 @@ def storeCode(id, code, stime, mintime):
     try:
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -498,7 +498,7 @@ def getStoreCode(id, hash):
     try:
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -536,7 +536,7 @@ def validateTwitter(id, username):
     try:
         conexion = None
         #params = config()
-        params = config('localdb')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
@@ -550,10 +550,11 @@ def validateTwitter(id, username):
 
         cur.execute( "SELECT valid FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
         vTwitter = cur.fetchone()
+        print("la columns es ")
         print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter):
+        if(vTwitter and vTwitter is not None):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
@@ -582,6 +583,6 @@ def getTime(separador="_"):
     timestamp = "%s_%s_%s" % (time_D, time_M, time_Y)
     return timestamp
 
-
 #"08122b7065a6e80e465709a380af57c69ecde1fd27f5a05d8c1c1474f1ce27e6"
+
 #"9bbd6b6168abcde2e492529519f91eab59210c423c2d45b3f76e4b2cf62dd0f3"

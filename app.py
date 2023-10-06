@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, session, url_for, render_template, send_file
+from flask import Flask, request, redirect, session, send_file
 from flask_cors import CORS
 from telethon.errors.rpcerrorlist import PeerFloodError
 import os
@@ -25,7 +25,8 @@ _TIMEMIN_ = 90
 consumer_key='Gi22eaK49RxNH9uYhJquV0v4u'
 consumer_secret= 'rQJKpa4p8j8Pc1Ju9llERSDyCcj6NuKwyXrGJy4wHFYcDIU923'
 
-web_url = "https://x6nge.com"
+#web_url = "https://x6nge.com"
+web_url = "http://localhost:8080"
 request_token_url = "https://api.twitter.com/oauth/request_token"
 access_token_url = "https://api.twitter.com/oauth/access_token"
 
@@ -42,16 +43,6 @@ params = {"user.fields": fields}
 # gunicorn --bind 0.0.0.0:8000 app:app
 
 
-"""
-task = asyncio.create_task(startConnection())
-res = await asyncio.shield(task)
-while True:
-   
-    if task.done():
-        client = task.result()
-        break
-"""
-
 app = Flask(__name__, instance_relative_config=False)
 app.secret_key = os.urandom(50)
 #CORS(app, supports_credentials=True)
@@ -62,7 +53,6 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 ######################## TWITTER OAUTH ######################
 @app.route("/", methods=["GET"])
 def index():
-    #print("el base dir %s" % (os.getcwd()+"\csv"))
     #session['8000'] = False
     #session['8001'] = False
     #session['8002'] = False
@@ -77,8 +67,9 @@ def index():
     try:
         fetch_response = oauth.fetch_request_token(request_token_url)
     except ValueError:
-        pass
-        #print("There may have been an issue with the consumer_key or consumer_secret you entered.")
+        print(
+            "There may have been an issue with the consumer_key or consumer_secret you entered."
+        )
 
     resource_owner_key = fetch_response.get("oauth_token")
     resource_owner_secret = fetch_response.get("oauth_token_secret")
@@ -101,10 +92,10 @@ def callback():
     resource_owner_key = session["%s1"%ip]
     resource_owner_secret = session["%s2"%ip]
 
-    #print("Got OAuth token: %s" % resource_owner_key)
+    print("Got OAuth token: %s" % resource_owner_key)
 
     verifier = request.args.get("oauth_verifier")
-    #print("el toen de verificacion %s"%verifier)
+    print("el toen de verificacion %s"%verifier)
     oauth = OAuth1Session(
         consumer_key,
         client_secret=consumer_secret,
@@ -132,10 +123,10 @@ def callback():
             "Request returned an error: {} {}".format(response.status_code, response.text)
         )
 
-    #print("Response code: {}".format(response.status_code))
+    print("Response code: {}".format(response.status_code))
 
     json_response = response.json()
-    #print(json_response)
+    print(json_response)
 
     mId = json_response['data']['id']
     mUsername = json_response['data']['username']
@@ -149,7 +140,7 @@ def callback():
     ind = 0  
     while 1:
         #print("se hizo break por 10 %s" % ind)
-        if(ind == 10):
+        if(ind == 3):
             #print("se hizo break por 10")
             break
         try:
@@ -232,12 +223,12 @@ def callback():
         
         ind+=1
         time.sleep(1)
-    if(ind >= 10):
+    if(ind >= 3):
         return redirect('%s/?token=%s&twitteralert=true&error=connexion_timeout'%(web_url, _TOKEN_))
 
     jresponse = resp.json()
     isfollow = jresponse['response']
-    print("la respuesta de twitkt es %s"%isfollow)
+    print(jresponse)
 
     if(isfollow == 'username_follows'):
         mFollow = 'valid'
@@ -246,18 +237,18 @@ def callback():
     elif(isfollow == 'username_not_exist'):
         mFollow = 'notexist'
 
-    hash_value = calculate_sha256('%s %s'%(mId, mUsername))
+    hash_value = calculate_sha256('%s' % mId)
 
     stwitter = storeTwitter(mId, mUsername, mFollow, hash_value)
     if(stwitter):
-        print("redireccionando con true")
         return redirect('%s/?token=%s&username=%s&twitter=%s&hash=%s&twitteralert=true'%(web_url, _TOKEN_, mUsername, mFollow, hash_value))
     else:
-        print("redireccionando con error not_stored_twitter_user")
-        return redirect('%s/?token=%s&twitteralert=true&error=not_stored_twitter_user'%(web_url, _TOKEN_))
+        return {"response": "not_stored_twitter_user"}
     #print(json.dumps(json_response, indent=4, sort_keys=True))
+    
 
 #############################################################
+
 
 @app.route('/api/telegram', methods=["GET"])
 async def telegramget():
@@ -282,7 +273,7 @@ async def telegramget():
 
     if(userdata):
         valid = validUserFromDb(userdata)
-        hash_value = calculate_sha256("%s %s %s" % (userdata['id'], userdata['name'], userdata['username']))
+        hash_value = calculate_sha256("%s" % userdata['id'])
         #print("validando desde bd %s"%valid)
         if(valid):
             returndata = {'response': 'user_ok', 'hash': hash_value, 'id': userdata['id']}
@@ -323,10 +314,10 @@ async def telegram():
 
     if(userdata):
         
-        hash_value = calculate_sha256("%s %s %s" % (userdata['id'], userdata['name'], userdata['username']))
+        hash_value = calculate_sha256("%s" % userdata['id'])
         valid = validUserFromDb(userdata, hash_value)
         
-        #print("validando desde bd %s"%valid)
+        print("validando desde bd %s"%valid)
         if(valid):
             receiver = await client.get_input_entity(user)
             
@@ -381,11 +372,11 @@ async def telegramCode():
     timeactual = timestamp()
     
     scode = getStoreCode(id, hash)
-    #print("el sms guardao es %s" % scode[0])
+    print("el sms guardao es %s" % scode[0])
     returndata = ""
 
     timedif = scode[1] - timeactual
-    #print("print el timedef es %s el code %s el storecode %s el tim %s " % (timedif, code, scode[0], scode[1]))
+    print("print el timedef es %s el code %s el storecode %s el tim %s " % (timedif, code, scode[0], scode[1]))
     if(timedif <= _TIMEMAX_):
         if(int(code) == int(scode[0])):
             returndata = {'response': 'code_ok'}
@@ -421,23 +412,23 @@ def cleandb():
         #print(params)
 
         # Conexion al servidor de MySql
-        #print('Conectando a la base de datos MySql...')
+        print('Conectando a la base de datos MySql...')
         conexion = mysql.connector.connect(**params)
         
         # creación del cursor
         cur = conexion.cursor()
         cur.execute("DROP TABLE IF EXISTS telegram")
         conexion.commit()
-        #print("se elimino la tabla correctamente")
+        print("se elimino la tabla correctamente")
         conexion.close()
         returndata = {'response': 'clean_bd_ok'}
     except (Exception) as error:
-        #print(error)
+        print(error)
         returndata = {'response': 'clean_bd_ok', 'data': error}
     finally:
         if conexion is not None:
             conexion.close()
-            #print('Conexión finalizada.')
+            print('Conexión finalizada.')
 
     response = app.response_class(
         response=json.dumps(returndata),
@@ -475,34 +466,34 @@ def updatebd():
         #print(params)
 
         # Conexion al servidor de MySql
-        #print('Conectando a la base de datos MySql...')
+        print('Conectando a la base de datos MySql...')
         conexion = mysql.connector.connect(**params)
         
         # creación del cursor
         cur = conexion.cursor()
         sql = "UPDATE telegram SET valid=%s WHERE userid=%s;"
         cur.execute(sql, (value, user))
-        #print("actualizando la base de datos")
+        print("actualizando la base de datos")
         conexion.commit()
         cur.execute( "SELECT userid, valid FROM telegram" )
 
         # Recorremos los resultados y los mostramos
 
-        #userlist = cur.fetchall()
-        #for userid, valid in userlist :
-            #print("revisando la lista de los usuarios: %s valid: %s"%(userid, valid))
+        userlist = cur.fetchall()
+        for userid, valid in userlist :
+            print("revisando la lista de los usuarios: %s valid: %s"%(userid, valid))
         # Cierre de la comunicación con MySql
         conexion.close()
-        #print("se cerro la conexion con la base de datos")
+        print("se cerro la conexion con la base de datos")
         returndata = {'response': 'user_updated_ok'}
 
     except (Exception) as error:
-        #print(error)
+        print(error)
         returndata = {'response': 'user_updated_error', 'data': error}
     finally:
         if conexion is not None:
             conexion.close()
-            #print('Conexión finalizada.')
+            print('Conexión finalizada.')
 
     response = app.response_class(
         response=json.dumps(returndata),
@@ -531,7 +522,7 @@ def getusers():
     try:
         conexion = None
         params = config()
-        #print('Conectando a la base de datos MySql...')
+        print('Conectando a la base de datos MySql...')
         conexion = mysql.connector.connect(**params)
         
         cur = conexion.cursor()
@@ -540,18 +531,18 @@ def getusers():
         userlist = cur.fetchall()
         for userid, valid in userlist :
             ListUser.append([userid, valid])
-            #print("revisando la lista de los usuarios: %s valid: %s"%(userid, valid))
+            print("revisando la lista de los usuarios: %s valid: %s"%(userid, valid))
         conexion.close()
-        #print("se cerro la conexion con la base de datos")
+        print("se cerro la conexion con la base de datos")
         return {'response': 'user_list_ok', 'data': ListUser}
 
     except (Exception) as error:
-        #print(error)
+        print(error)
         return {'response': 'user_updated_error', 'data': error}
     finally:
         if conexion is not None:
             conexion.close()
-            #print('Conexión finalizada.')
+            print('Conexión finalizada.')
 
 ####################AUTENTICATE WALLET##################
 @app.route('/api/wallet', methods=["POST"])
@@ -676,7 +667,6 @@ async def getwalletcsv():
         )
     return response
 ########################################################
-
 @app.after_request
 def after_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*" # <- You can change "*" for a domain for example "http://localhost"
