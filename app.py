@@ -232,7 +232,7 @@ def callback():
         
         ind+=1
         time.sleep(1)
-    if(ind >= 7):
+    if(ind >= 10):
         return redirect('%s/?token=%s&twitteralert=true&error=connexion_timeout'%(web_url, _TOKEN_))
 
     jresponse = resp.json()
