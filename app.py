@@ -237,7 +237,7 @@ def callback():
 
     jresponse = resp.json()
     isfollow = jresponse['response']
-    #print(jresponse)
+    print(jresponse)
 
     if(isfollow == 'username_follows'):
         mFollow = 'valid'
