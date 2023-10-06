@@ -140,14 +140,14 @@ def callback():
     ind = 0  
     while 1:
         #print("se hizo break por 10 %s" % ind)
-        if(ind == 3):
+        if(ind == 2):
             #print("se hizo break por 10")
             break
         try:
             if(not session['5001']):
                 session['5001'] = True
                 #print("se envio la peticion")
-                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']))
+                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
                 session['5001'] = False
                 if resp.status_code != 200:
                     pass
@@ -163,7 +163,7 @@ def callback():
         try:
             if(not session['5002']):
                 session['5002'] = True
-                resp = requests.get('http://localhost:5002/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']))
+                resp = requests.get('http://localhost:5002/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
                 session['5002'] = False
                 if resp.status_code != 200:
                     pass
@@ -178,7 +178,7 @@ def callback():
         try:
             if(not session['5003']):
                 session['5003'] = True
-                resp = requests.get('http://localhost:5003/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']))
+                resp = requests.get('http://localhost:5003/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
                 session['5003'] = False
                 if resp.status_code != 200:
                     pass
@@ -194,7 +194,7 @@ def callback():
         try:
             if(not session['5004']):
                 session['5004'] = True
-                resp = requests.get('http://localhost:5004/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']))
+                resp = requests.get('http://localhost:5004/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
                 session['5004'] = False
                 if resp.status_code != 200:
                     pass
@@ -209,7 +209,7 @@ def callback():
         try:
             if(not session['5005']):
                 session['5005'] = True
-                resp = requests.get('http://localhost:5005/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']))
+                resp = requests.get('http://localhost:5005/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=3)
                 session['5005'] = False
                 if resp.status_code != 200:
                     pass
@@ -222,8 +222,8 @@ def callback():
             session['5005'] = False
         
         ind+=1
-        time.sleep(1)
-    if(ind >= 3):
+        print("reintento %s de conexion " % ind)
+    if(ind >= 2):
         return redirect('%s/?token=%s&twitteralert=true&error=connexion_timeout'%(web_url, _TOKEN_))
 
     jresponse = resp.json()
