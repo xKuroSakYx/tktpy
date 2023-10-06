@@ -206,19 +206,21 @@ def storeTwitter(id, user, follow, shash):
         cur.execute( "SELECT userid, username, follow, mhash, valid FROM twitter where userid=%s and mhash = %s", (id, shash) )
         userlist = cur.fetchall()
         for data in userlist:
-            print(data[0])
+            print("____%s____" % data[0])
             if(data[0] == id):
                 isexist = True
             
         if(isexist):
             cur.execute( "UPDATE twitter SET username=%s, follow=%s, mhash=%s, valid=%s where userid=%s and mhash = %s", (user, follow, shash, 0, id, shash) )
             conexion.commit()
+            print("se actualizo un usuario %s"%user)
             conexion.close()
             return True
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         sql="insert into twitter(userid, username, follow, mhash, valid) values (%s, %s, %s, %s, 0)"
         datos=(id, user, follow, shash)
         cur.execute(sql, datos)
+        print("se inserto un nuevo usuario %s"%user)
         conexion.commit()
         conexion.close()
         return True
@@ -545,7 +547,7 @@ def validateTwitter(id, username):
         cur = conexion.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS twitter (id bigint(255) not null AUTO_INCREMENT , userid bigint(255) not null, username varchar(255) not null, follow varchar(50) not null, mhash varchar(255) not null, valid int(1) not null, primary key (id))")
         conexion.commit()
-        
+
         cur.execute( "SELECT valid FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
         vTwitter = cur.fetchone()
         print(vTwitter)
