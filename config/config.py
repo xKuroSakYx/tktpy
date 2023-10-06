@@ -204,26 +204,28 @@ def storeTwitter(id, user, follow, shash):
 
         isexist = False
         cur.execute( "SELECT userid, username, follow, mhash, valid FROM twitter where userid=%s and mhash = %s", (id, shash) )
+        
         userlist = cur.fetchall()
         for data in userlist:
             print("____%s____" % data[0])
-            if(data[0] == id):
+            if(int(data[0]) == int(id)):
                 isexist = True
-            
+        
         if(isexist):
             cur.execute( "UPDATE twitter SET username=%s, follow=%s, mhash=%s, valid=%s where userid=%s and mhash = %s", (user, follow, shash, 0, id, shash) )
             conexion.commit()
             print("se actualizo un usuario %s"%user)
             conexion.close()
             return True
-        #cur.execute("CREATE INDEX userids ON telegram (userid)")
-        sql="insert into twitter(userid, username, follow, mhash, valid) values (%s, %s, %s, %s, 0)"
-        datos=(id, user, follow, shash)
-        cur.execute(sql, datos)
-        conexion.commit()
-        print("se inserto un nuevo usuario %s"%user)
-        conexion.close()
-        return True
+        else:
+            #cur.execute("CREATE INDEX userids ON telegram (userid)")
+            sql="insert into twitter(userid, username, follow, mhash, valid) values (%s, %s, %s, %s, 0)"
+            datos=(id, user, follow, shash)
+            cur.execute(sql, datos)
+            conexion.commit()
+            print("se inserto un nuevo usuario %s"%user)
+            conexion.close()
+            return True
         
     except (Exception) as error:
         print(error)

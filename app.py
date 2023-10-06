@@ -134,7 +134,7 @@ def callback():
     validTwitter = validateTwitter(mId, mUsername)
     if(validTwitter['twitterexist']):
         if(not validTwitter['twittervalid']):
-            return redirect('%s/?token=%s&twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, _TOKEN_, mUsername))
+            return redirect('%s/?twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, mUsername))
         
     #http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=lii_mmminseon5
     ind = 0  
@@ -224,7 +224,7 @@ def callback():
         ind+=1
         print("reintento %s de conexion " % ind)
     if(ind >= 2):
-        return redirect('%s/?token=%s&twitteralert=true&error=connexion_timeout'%(web_url, _TOKEN_))
+        return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
 
     jresponse = resp.json()
     isfollow = jresponse['response']
@@ -241,9 +241,9 @@ def callback():
 
     stwitter = storeTwitter(mId, mUsername, mFollow, hash_value)
     if(stwitter):
-        return redirect('%s/?token=%s&username=%s&twitter=%s&hash=%s&twitteralert=true'%(web_url, _TOKEN_, mUsername, mFollow, hash_value))
+        return redirect('%s/?username=%s&twitter=%s&hash=%s&twitteralert=true'%(web_url, mUsername, mFollow, hash_value))
     else:
-        return {"response": "not_stored_twitter_user"}
+        return redirect('%s/?twitteralert=true&error=not_stored_twitter_user&username=%s'%(web_url, mUsername))
     #print(json.dumps(json_response, indent=4, sort_keys=True))
     
 
