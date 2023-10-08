@@ -637,7 +637,7 @@ async def getwallet():
     )
 
     if csvWallet:
-        file_path = os.path.join(app.config['BASE_DIR'], csvWallet)
+        file_path = os.path.join(os.getcwd()+"\csv", csvWallet)
         return send_file(file_path)
     else:
         return response
