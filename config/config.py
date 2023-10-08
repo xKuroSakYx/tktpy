@@ -103,9 +103,8 @@ async def validateUsername(client, _group, _type, _user):
             break
     return userdata
 
-def validUserFromDb(data, hash):
+def validUserFromDb(username):
     try:
-        tktid = authCode(15)
         conexion = None
         #params = config()
         params = config('x6nge')
@@ -123,48 +122,28 @@ def validUserFromDb(data, hash):
         cur.execute("CREATE TABLE IF NOT EXISTS telegram (id bigint(255) not null AUTO_INCREMENT, userid bigint(255) not null, valid int(1) not null, mhash varchar(255) not null, primary key (id))  ENGINE = InnoDB")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
 
-        cur.execute( "SELECT valid, mhash FROM telegram where userid=%s", (data['id'], ) )
+        cur.execute( "SELECT valid, userid FROM telegram where username=%s", (username, ) )
 
         # Recorremos los resultados y los mostramos
-
         userlist = cur.fetchall()
         for valid in userlist :
             #print("el user id %s el valid %s"%(userid, valid))
-            if(valid[0] == 0 and valid[1] == hash):
-                print("el usuario %s esta regisrado en el canal pero no ha recibido los token "% data['id'])
+            if(valid[0] == 0 and valid[1]):
+                print("el usuario %s esta regisrado en el canal pero no ha recibido los token "% username)
                 conexion.close()
-                #return {'valid': True, 'tktid': valid[1]}
-                return True
+                return {'response': "user_ok", 'userid': valid[1]}
             
-            elif(valid[0] == 1 and valid[1] == hash):
-                print("el usuario %s ya recibio los token"% data['id'])
+            elif(valid[0] == 1 and valid[1]):
+                print("el usuario %s ya recibio los token"% username)
                 conexion.close()
-                #return {'valid': False, 'tktid': valid[1]}
-                return False
-            else:
-                print("ingresando un nuevo usuario %s"% data['id'])
-                sql="insert into telegram(userid, valid, mhash) values (%s, 0, %s)"
-                datos=(data['id'], hash)
-                cur.execute(sql, datos)
-                print("se inserto la fila correctamente hash %s "% hash)
-                conexion.commit()
-                conexion.close()
-                #return {'valid': True, 'tktid': tktid}
-                return True
+                return {'response': "user_exist", 'userid': valid[1]}
         
-        print("ingresando un nuevo usuario final %s"% data['id'])
-        sql="insert into telegram(userid, valid, mhash) values (%s, 0, %s)"
-        datos=(data['id'], hash)
-        cur.execute(sql, datos)
-        print("se inserto la fila correctamente final hash %s "% hash)
-        conexion.commit()
-        conexion.close()
-        
-        #return {'valid': True, 'tktid': tktid}
-        return True
+
+        return {'response': "user_not_registry"}
         
     except (Exception) as error:
         print(error)
+        return {'response': "user_error"}
     finally:
         if conexion is not None:
             conexion.close()

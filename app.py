@@ -245,10 +245,8 @@ def callback():
     else:
         return redirect('%s/?twitteralert=true&error=not_stored_twitter_user&username=%s'%(web_url, mUsername))
     #print(json.dumps(json_response, indent=4, sort_keys=True))
-    
 
 #############################################################
-
 
 @app.route('/api/telegram', methods=["GET"])
 async def telegramget():
@@ -266,22 +264,38 @@ async def telegramget():
         )
     
     client = await startConnection()
-    userdata = await validateUsername(client, group, type, user)
+    valid = validUserFromDb(user)
+    
+    if(valid['response'] == "user_ok"):
+        
+        hash_value = calculate_sha256("%s" % valid['userid'])
+        message = authCode()
+        store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
+
+        try:
+            receiver = await client.get_input_entity(user)
+            await client.send_message(receiver, message.format(user))
+        except PeerFloodError:
+            pass
+            #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
+        except Exception as e:
+            pass
+            #print("[!] Error:", e)
+            #print("[!] Trying to continue...")
+        if(store["response"] == "store_code_ok"):
+            returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
+        else:
+            returndata = {'response': 'user_timeout'}
+
+    elif valid == "user_exist":
+        returndata = {'response': 'user_exist'}
+    elif(valid == "user_not_registry"):
+        returndata = {'response': "user_not_registry"}
+    elif valid == "user_error":
+        returndata = {'response': 'user_error'}
+
     await client.disconnect()
 
-    returndata = ""
-
-    if(userdata):
-        valid = validUserFromDb(userdata)
-        hash_value = calculate_sha256("%s" % userdata['id'])
-        #print("validando desde bd %s"%valid)
-        if(valid):
-            returndata = {'response': 'user_ok', 'hash': hash_value, 'id': userdata['id']}
-        else:
-            returndata = {'response': 'user_exist'}
-    else:
-        returndata = {'response': "user_not_registry"}
-    
     response = app.response_class(
         response=json.dumps(returndata),
         status=200,
@@ -296,6 +310,8 @@ async def telegram():
     token = data["token"]
     group = data["group"]
     type = data["type"]
+    returndata = ""
+
     #print(token+" "+user+" "+group+" "+type)
     #time.sleep(4)
     #return {'response': 'user_ok', 'data': "okok"}
@@ -307,41 +323,35 @@ async def telegram():
         )
     
     client = await startConnection()
-    userdata = await validateUsername(client, group, type, user)
-    
-    returndata = ""
-    
+    valid = validUserFromDb(user)
 
-    if(userdata):
+    if(valid['response'] == "user_ok"):
         
-        hash_value = calculate_sha256("%s" % userdata['id'])
-        valid = validUserFromDb(userdata, hash_value)
-        
-        print("validando desde bd %s"%valid)
-        if(valid):
+        hash_value = calculate_sha256("%s" % valid['userid'])
+        message = authCode()
+        store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
+
+        try:
             receiver = await client.get_input_entity(user)
-            
-            message = authCode()
-            store = storeCode(userdata['id'], message, timestamp(), _TIMEMIN_)
-            
-            #print("se envio el codigo %s " % message)
-            try:
-                await client.send_message(receiver, message.format(user))
-            except PeerFloodError:
-                pass
-                #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
-            except Exception as e:
-                pass
-                #print("[!] Error:", e)
-                #print("[!] Trying to continue...")
-            if(store["response"] == "store_code_ok"):
-                returndata = {'response': 'user_ok', 'hash': hash_value, 'id': userdata['id']}
-            else:
-                returndata = {'response': 'user_timeout'}
+            await client.send_message(receiver, message.format(user))
+        except PeerFloodError:
+            pass
+            #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
+        except Exception as e:
+            pass
+            #print("[!] Error:", e)
+            #print("[!] Trying to continue...")
+        if(store["response"] == "store_code_ok"):
+            returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
         else:
-            returndata = {'response': 'user_exist'}
-    else:
+            returndata = {'response': 'user_timeout'}
+
+    elif valid == "user_exist":
+        returndata = {'response': 'user_exist'}
+    elif(valid == "user_not_registry"):
         returndata = {'response': "user_not_registry"}
+    elif valid == "user_error":
+        returndata = {'response': 'user_error'}
 
     await client.disconnect()
 
