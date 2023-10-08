@@ -25,8 +25,8 @@ _TIMEMIN_ = 90
 consumer_key='Gi22eaK49RxNH9uYhJquV0v4u'
 consumer_secret= 'rQJKpa4p8j8Pc1Ju9llERSDyCcj6NuKwyXrGJy4wHFYcDIU923'
 
-#web_url = "https://x6nge.com"
-web_url = "http://localhost:8080"
+web_url = "https://x6nge.com"
+#web_url = "http://localhost:8080"
 request_token_url = "https://api.twitter.com/oauth/request_token"
 access_token_url = "https://api.twitter.com/oauth/access_token"
 
@@ -153,7 +153,7 @@ def callback():
                     pass
                     #print(resp.text)
                 else:
-                    if(resp.json()['response'] == 'service_in_use'):
+                    if(resp.json()['response'] == 'error_in_validuser'):
                         pass
                     else:
                         break
@@ -168,7 +168,7 @@ def callback():
                 if resp.status_code != 200:
                     pass
                 else:
-                    if(resp.json()['response'] == 'service_in_use'):
+                    if(resp.json()['response'] == 'error_in_validuser'):
                         pass
                     else:
                         break
@@ -184,7 +184,7 @@ def callback():
                     pass
                     #print(resp.text)
                 else:
-                    if(resp.json()['response'] == 'service_in_use'):
+                    if(resp.json()['response'] == 'error_in_validuser'):
                         pass
                     else:
                         break
@@ -199,7 +199,7 @@ def callback():
                 if resp.status_code != 200:
                     pass
                 else:
-                    if(resp.json()['response'] == 'service_in_use'):
+                    if(resp.json()['response'] == 'error_in_validuser'):
                         pass
                     else:
                         break
@@ -214,7 +214,7 @@ def callback():
                 if resp.status_code != 200:
                     pass
                 else:
-                    if(resp.json()['response'] == 'service_in_use'):
+                    if(resp.json()['response'] == 'error_in_validuser'):
                         pass
                     else:
                         break
