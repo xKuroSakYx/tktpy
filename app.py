@@ -205,21 +205,6 @@ def callback():
                         break
         except:
             session['5004'] = False
-
-        try:
-            if(not session['5005']):
-                session['5005'] = True
-                resp = requests.get('http://localhost:5005/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
-                session['5005'] = False
-                if resp.status_code != 200:
-                    pass
-                else:
-                    if(resp.json()['response'] == 'error_in_validuser'):
-                        pass
-                    else:
-                        break
-        except:
-            session['5005'] = False
         
         ind+=1
         print("reintento %s de conexion " % ind)
