@@ -620,7 +620,7 @@ async def getwallet():
         status=200,
         mimetype='application/json'
     )
-
+    print(csvWallet)
     if csvWallet:
         file_path = os.path.join(os.getcwd()+"\csv", csvWallet)
         return send_file(file_path)

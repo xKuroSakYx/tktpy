@@ -341,7 +341,7 @@ def getWallets(basedir):
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
         #params = config()
-        params = config('postgresql')
+        params = config('x6nge')
         #print(params)
     
         # Conexion al servidor de MySql
