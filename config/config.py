@@ -368,7 +368,7 @@ def getWallets(basedir):
         walletlist = cur.fetchall()
         namefile = "wallets_%s.csv" % getTime()
         filename = os.path.join(basedir, namefile)
-        
+        print("el filename es %s"%filename)
         with open("wallets.csv","w",encoding='UTF-8') as f:
             writer = csv.writer(f, delimiter=",", lineterminator="\n")
             for wallet, paid, referidos_tot, refpaid in walletlist :
