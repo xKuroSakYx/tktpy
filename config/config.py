@@ -553,6 +553,14 @@ def validateTwitter(id, username):
 
 def getTime(separador="_"):
     timeA = datetime.now()
+
+    time_Hour = str(timeA.hour)
+    if len(time_Hour) == 1:
+        time_Hour = "0%s" % time_Hour
+    time_min = str(timeA.minute)
+    if len(time_min) == 1:
+        time_min = "0%s" % time_min
+    
     time_D = str(timeA.day)
     if len(time_D) == 1:
         time_D = "0%s" % time_D
@@ -561,7 +569,8 @@ def getTime(separador="_"):
         time_M = "0%s" % time_M
     time_Y = str(timeA.year)
 
-    timestamp = "%s_%s_%s" % (time_D, time_M, time_Y)
+
+    timestamp = "%s_%s_%s_%s%s" % (time_D, time_M, time_Y, time_Hour, time_min)
     return timestamp
 
 #"08122b7065a6e80e465709a380af57c69ecde1fd27f5a05d8c1c1474f1ce27e6"
