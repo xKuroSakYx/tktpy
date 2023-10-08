@@ -613,7 +613,7 @@ async def getwallet():
             mimetype='application/json'
         )
     
-    csvWallet = getWallets(os.getcwd()+"\csv")
+    csvWallet = getWallets(os.getcwd()+"csv/")
 
     response = app.response_class(
         response=json.dumps({'response': 'No Se pudo Devolver el archivo intente de nuevo'}),
@@ -622,8 +622,8 @@ async def getwallet():
     )
     print(csvWallet)
     if csvWallet:
-        file_path = os.path.join(os.getcwd()+"\csv", csvWallet)
-        return send_file(file_path)
+        #file_path = os.path.join(os.getcwd()+"csv/", csvWallet)
+        return send_file(csvWallet)
     else:
         return response
     
