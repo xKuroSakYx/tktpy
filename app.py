@@ -113,8 +113,11 @@ def callback():
         resource_owner_secret=resource_owner_secret,
         verifier=verifier,
     )
-    oauth_tokens = oauth.fetch_access_token(access_token_url)
-
+    try:
+        oauth_tokens = oauth.fetch_access_token(access_token_url)
+    except:
+        return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
+    
     access_token = oauth_tokens["oauth_token"]
     access_token_secret = oauth_tokens["oauth_token_secret"]
 
