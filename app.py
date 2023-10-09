@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, session, send_file
+from flask import Flask, request, redirect, session, send_file, make_response
 from flask_cors import CORS
 from telethon.errors.rpcerrorlist import PeerFloodError
 import os
@@ -59,8 +59,6 @@ def index():
     #session['8003'] = False
     #session['8004'] = False
     #session['8005'] = False
-    ip = '%s' % request.remote_addr
-    ip = ip.replace('.', '')
     
     oauth = OAuth1Session(consumer_key, client_secret=consumer_secret)
 
@@ -73,27 +71,38 @@ def index():
 
     resource_owner_key = fetch_response.get("oauth_token")
     resource_owner_secret = fetch_response.get("oauth_token_secret")
-    
+    #request.cookies
+    #request.cookies.add('resource_owner_key', resource_owner_key)
+    #request.cookies.add('resource_owner_secret', resource_owner_secret)
+
     #session['ip'] = {'resource_owner_key': resource_owner_key, "resource_owner_secret": resource_owner_secret}
-    session["%s1"%ip] = resource_owner_key
-    session["%s2"%ip]  = resource_owner_secret
+    
+    #session["%s1"%ip] = resource_owner_key
+    #session["%s2"%ip]  = resource_owner_secret
 
     # # Get authorization
     base_authorization_url = "https://api.twitter.com/oauth/authorize"
     authorization_url = oauth.authorization_url(base_authorization_url)
     
-    return redirect(authorization_url)
+    resp = make_response(redirect(authorization_url))
+    resp.set_cookie('resource_owner_key', resource_owner_key)
+    resp.set_cookie('resource_owner_secret', resource_owner_secret)
+
+    """
+        myResponse = make_response('Response')
+        myResponse.headers['customHeader'] = 'This is a custom header'
+        myResponse.status_code = 403
+        myResponse.mimetype = 'video/mp4'
+    """
+    return resp
 
 @app.route("/oauth/callback", methods=["GET"])
 def callback():
-    ip = '%s' % request.remote_addr
-    ip = ip.replace('.', '')
     try:
-        resource_owner_key = session["%s1"%ip]
-        resource_owner_secret = session["%s2"%ip]
+        resource_owner_key = request.cookies.get('resource_owner_key')
+        resource_owner_secret = request.cookies.get('resource_owner_secret')
     except:
         return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
-    print("Got OAuth token: %s" % resource_owner_key)
 
     verifier = request.args.get("oauth_verifier")
     print("el toen de verificacion %s"%verifier)
