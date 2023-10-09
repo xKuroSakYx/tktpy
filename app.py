@@ -88,10 +88,11 @@ def index():
 def callback():
     ip = '%s' % request.remote_addr
     ip = ip.replace('.', '')
-    
-    resource_owner_key = session["%s1"%ip]
-    resource_owner_secret = session["%s2"%ip]
-
+    try:
+        resource_owner_key = session["%s1"%ip]
+        resource_owner_secret = session["%s2"%ip]
+    except:
+        return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
     print("Got OAuth token: %s" % resource_owner_key)
 
     verifier = request.args.get("oauth_verifier")
@@ -132,7 +133,7 @@ def callback():
     mUsername = json_response['data']['username']
     
     validTwitter = validateTwitter(mId, mUsername)
-    if(validTwitter['twitterexist']):
+    if(validTwitter is not None and validTwitter['twitterexist']):
         if(not validTwitter['twittervalid']):
             return redirect('%s/?twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, mUsername))
         
