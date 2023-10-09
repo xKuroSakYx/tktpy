@@ -458,7 +458,7 @@ def storeCode(id, code, stime, mintime):
                 conexion.close()
                 return {"response": "store_code_ok"}
             else:
-                return {"response": "store_code_timeout"}
+                return {"response": "store_code_timeout", 'segundos': stime - cod[0]}
                 
         print("insertando nueva fila")
         sql="insert into telegramcode (userid, code, fecha) values (%s, %s, %s)"

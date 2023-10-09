@@ -328,8 +328,10 @@ async def telegram():
             #print("[!] Trying to continue...")
         if(store["response"] == "store_code_ok"):
             returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
+        elif(store["response"] == "store_code_timeout"):
+            returndata = {'response': 'user_timeout', 'segundos': store['segundos']}
         else:
-            returndata = {'response': 'user_timeout'}
+            returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_}
 
     elif valid == "user_exist":
         returndata = {'response': 'user_exist'}
@@ -367,7 +369,7 @@ async def telegramCode():
     timeactual = timestamp()
     
     scode = getStoreCode(id, hash)
-    print("el sms guardao es %s" % scode[0])
+    print("el sms guardado es %s" % scode[0])
     returndata = ""
 
     timedif = scode[1] - timeactual
@@ -615,7 +617,7 @@ async def getwallet():
     
     csvWallet = getWallets(os.getcwd()+"/csv/")
     csvWallet = os.path.join(os.getcwd()+"/csv/", csvWallet)
-    
+
     response = app.response_class(
         response=json.dumps({'response': 'No Se pudo Devolver el archivo intente de nuevo'}),
         status=200,
