@@ -158,6 +158,7 @@ def callback():
                     else:
                         break
         except:
+            print("sessiom 5001 dio error")
             session['5001'] = False
 
         try:
