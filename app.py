@@ -150,8 +150,7 @@ def callback():
                 resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5001'] = False
                 if resp.status_code != 200:
-                    pass
-                    #print(resp.text)
+                    print(resp.text)
                 else:
                     if(resp.json()['response'] == 'error_in_validuser'):
                         pass
@@ -167,7 +166,7 @@ def callback():
                 resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5002'] = False
                 if resp.status_code != 200:
-                    pass
+                    print(resp.text)
                 else:
                     if(resp.json()['response'] == 'error_in_validuser'):
                         pass
@@ -183,8 +182,7 @@ def callback():
                 resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5003'] = False
                 if resp.status_code != 200:
-                    pass
-                    #print(resp.text)
+                    print(resp.text)
                 else:
                     if(resp.json()['response'] == 'error_in_validuser'):
                         pass
@@ -202,7 +200,6 @@ def callback():
                 session['5004'] = False
                 if resp.status_code != 200:
                     print(resp.text)
-                    pass
                 else:
                     if(resp.json()['response'] == 'error_in_validuser'):
                         pass
