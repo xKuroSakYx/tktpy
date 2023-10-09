@@ -116,6 +116,7 @@ def callback():
     try:
         oauth_tokens = oauth.fetch_access_token(access_token_url)
     except:
+        print("error token request denied")
         return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
     
     access_token = oauth_tokens["oauth_token"]
