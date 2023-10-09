@@ -174,6 +174,7 @@ def callback():
                     else:
                         break
         except:
+            print("sessiom 5002 dio error")
             session['5002'] = False
 
         try:
@@ -190,14 +191,17 @@ def callback():
                     else:
                         break
         except:
+            print("sessiom 5003 dio error")
             session['5003'] = False
 
         try:
             if(not session['5004']):
+                print("probando session 5004")
                 session['5004'] = True
                 resp = requests.get('http://localhost:5004/navigate?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
                 session['5004'] = False
                 if resp.status_code != 200:
+                    print(resp.text)
                     pass
                 else:
                     if(resp.json()['response'] == 'error_in_validuser'):
