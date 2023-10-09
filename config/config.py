@@ -119,7 +119,7 @@ def validUserFromDb(username):
         
         # creando la tabla si no existe
         #tktid bigint(255) not null,
-        cur.execute("CREATE TABLE IF NOT EXISTS telegram (id bigint(255) not null AUTO_INCREMENT, userid bigint(255) not null, valid int(1) not null, mhash varchar(255) not null, primary key (id))  ENGINE = InnoDB")
+        cur.execute("CREATE TABLE IF NOT EXISTS telegram (id bigint(255) not null AUTO_INCREMENT, userid bigint(255) not null, username varchar(255) not null, valid int(1) not null, mhash varchar(255) not null, primary key (id))  ENGINE = InnoDB")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
 
         cur.execute( "SELECT valid, userid FROM telegram where username=%s", (username, ) )
