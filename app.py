@@ -292,6 +292,7 @@ async def telegramget():
 async def telegram():
     data = request.get_json()
     user = data["username"]
+    user = user.replace("@", "")
     token = data["token"]
     group = data["group"]
     type = data["type"]
@@ -333,11 +334,11 @@ async def telegram():
         else:
             returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_}
 
-    elif valid == "user_exist":
+    elif valid['response'] == "user_exist":
         returndata = {'response': 'user_exist'}
-    elif(valid == "user_not_registry"):
+    elif(valid['response'] == "user_not_registry"):
         returndata = {'response': "user_not_registry"}
-    elif valid == "user_error":
+    elif valid['response'] == "user_error":
         returndata = {'response': 'user_error'}
 
     await client.disconnect()
@@ -551,6 +552,7 @@ async def wallet():
     telegram = data["telegram"]
     referido = data["referido"]
 
+    print("la data enviada es %s %s %s"%(wallet, twitter, telegram))
     #return {'response': 'user_ok', 'data': "okok"}
     if(_TOKEN_ != token):
         return app.response_class(
@@ -563,7 +565,7 @@ async def wallet():
     val = validateTwitterTelegram(twitter, telegram)
 
     isok =False
-    if(val['twitterexist'] and val['telegramexist']):
+    if(val is not None and val['twitterexist'] and val['telegramexist']):
         if(not val['twittervalid']):
             returndata = {'response': 'user_twitter_exist'}
         else:
