@@ -48,8 +48,6 @@ app.secret_key = os.urandom(50)
 #CORS(app, supports_credentials=True)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
-
-
 ######################## TWITTER OAUTH ######################
 @app.route("/api", methods=["GET"])
 def apipru():
