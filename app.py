@@ -51,6 +51,9 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 ######################## TWITTER OAUTH ######################
+@app.route("/api", methods=["GET"])
+def apipru():
+    return "funciona el get api"
 @app.route("/", methods=["GET"])
 def index():
     #session['8000'] = False
