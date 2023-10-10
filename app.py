@@ -155,7 +155,7 @@ def callback():
     ind = 0  
     while 1:
         #print("se hizo break por 10 %s" % ind)
-        if(ind == 2):
+        if(ind == 3):
             #print("se hizo break por 10")
             break
         try:
@@ -209,7 +209,7 @@ def callback():
         
         ind+=1
         print("reintento %s de conexion " % ind)
-    if(ind >= 2):
+    if(ind >= 3):
         return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
 
     jresponse = resp.json()
