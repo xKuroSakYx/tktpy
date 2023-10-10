@@ -46,7 +46,7 @@ params = {"user.fields": fields}
 app = Flask(__name__, instance_relative_config=False)
 app.secret_key = os.urandom(50)
 #CORS(app, supports_credentials=True)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 
