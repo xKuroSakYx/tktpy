@@ -152,7 +152,16 @@ def callback():
             return redirect('%s/?twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, mUsername))
         
     #http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=lii_mmminseon5
-    ind = 0  
+    try:
+        if(session[mUsername] == 4):
+            session[mUsername] = 0
+        else:
+            session[mUsername] = session[mUsername] + 1
+    except:
+        session[mUsername] = 0
+    
+    spaces = session[mUsername]
+    ind = 0
     while 1:
         #print("se hizo break por 10 %s" % ind)
         if(ind == 3):
@@ -162,7 +171,7 @@ def callback():
             if(not session['5001']):
                 session['5001'] = True
                 #print("se envio la peticion")
-                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
+                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
                 session['5001'] = False
                 if resp.status_code != 200:
                     print(resp.text)
@@ -178,7 +187,7 @@ def callback():
         try:
             if(not session['5002']):
                 session['5002'] = True
-                resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
+                resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
                 session['5002'] = False
                 if resp.status_code != 200:
                     print(resp.text)
@@ -194,7 +203,7 @@ def callback():
         try:
             if(not session['5003']):
                 session['5003'] = True
-                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}'.format(json_response['data']['username']), timeout=25)
+                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
                 session['5003'] = False
                 if resp.status_code != 200:
                     print(resp.text)
