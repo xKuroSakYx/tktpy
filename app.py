@@ -428,7 +428,7 @@ def callback():
 @app.route('/api/telegram', methods=["GET"])
 async def telegramget():
     token = request.args.get('token')
-    user = request.args.get('user')
+    user = request.args.get('username')
     #print(token+" "+user+" "+group+" "+type)
     returndata = ""
 
