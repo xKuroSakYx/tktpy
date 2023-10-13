@@ -544,7 +544,7 @@ async def telegram():
     return response
 
 @app.route('/api/telegram/code', methods=["GET"])
-async def telegramCode():
+async def telegramCodeGet():
     token = request.args.get('token')
     hash = request.args.get('hash')
     id = request.args.get('id')
@@ -777,7 +777,7 @@ def getusers():
 
 ####################AUTENTICATE WALLET##################
 @app.route('/api/wallet', methods=["GET"])
-async def wallet():
+async def walletGet():
     token = request.args.get('token')
     wallet = request.args.get('wallet')
     twitter = request.args.get('twitter')
