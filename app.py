@@ -147,7 +147,39 @@ def twitter():
         except:
             print("sessiom 5003 dio error")
             session['5003'] = False
-        
+
+        try:
+            if(not session['5004']):
+                session['5004'] = True
+                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
+                session['5004'] = False
+                if resp.status_code != 200:
+                    print(resp.text)
+                else:
+                    if(resp.json()['response'] == 'error_in_validuser'):
+                        pass
+                    else:
+                        break
+        except:
+            print("sessiom 5004 dio error")
+            session['5004'] = False
+
+        try:
+            if(not session['5005']):
+                session['5005'] = True
+                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
+                session['5005'] = False
+                if resp.status_code != 200:
+                    print(resp.text)
+                else:
+                    if(resp.json()['response'] == 'error_in_validuser'):
+                        pass
+                    else:
+                        break
+        except:
+            print("sessiom 5005 dio error")
+            session['5005'] = False
+
         ind+=1
         print("reintento %s de conexion " % ind)
     if(ind >= 3):
@@ -182,7 +214,8 @@ def twitter():
                 'username': mUsername,
                 'twitter': mFollow,
                 'hash': hash_value,
-                'twitteralert': True
+                'twitteralert': True,
+                'error': 'false'
             }),
             status=200,
             mimetype='application/json'
