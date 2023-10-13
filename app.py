@@ -509,7 +509,7 @@ async def telegram():
         hash_value = calculate_sha256("%s" % valid['userid'])
         message = authCode()
         store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
-
+        print("validando el store")
         try:
             receiver = await client.get_input_entity(user)
             await client.send_message(receiver, message.format(user))
