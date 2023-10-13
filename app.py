@@ -98,9 +98,10 @@ def twitter():
                 session['5001'] = True
                 #print("se envio la peticion")
                 try:
-                    resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                    resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
 
                 except:
+                    print(resp.text)
                     print("el error es la peticion")
                 session['5001'] = False
                 print('session 5001 es %s' % session['5001'])
@@ -118,7 +119,7 @@ def twitter():
         try:
             if(not session['5002']):
                 session['5002'] = True
-                resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
                 session['5002'] = False
                 if resp.status_code != 200:
                     print(resp.text)
@@ -134,7 +135,7 @@ def twitter():
         try:
             if(not session['5003']):
                 session['5003'] = True
-                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
                 session['5003'] = False
                 if resp.status_code != 200:
                     print(resp.text)
