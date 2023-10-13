@@ -86,6 +86,7 @@ def twitter():
         session[mUsername] = 0
     
     spaces = session[mUsername]
+    print('los spacios son %sf'%spaces)
     ind = 0
     while 1:
         #print("se hizo break por 10 %s" % ind)
@@ -98,6 +99,7 @@ def twitter():
                 #print("se envio la peticion")
                 resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
                 session['5001'] = False
+                print('session 5001 es %s' % session['5001'])
                 if resp.status_code != 200:
                     print(resp.text)
                 else:
