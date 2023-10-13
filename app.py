@@ -49,9 +49,151 @@ app.secret_key = os.urandom(50)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 ######################## TWITTER OAUTH ######################
-@app.route("/api", methods=["GET"])
-def apipru():
-    return "funciona el get api"
+@app.route("/twitter", methods=["GET"])
+def twitter():
+    token = request.args.get('token')
+    mId = request.args.get('id')
+    mUsername = request.args.get('username')
+
+    if(_TOKEN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    validTwitter = validateTwitter(mId, mUsername)
+    if(validTwitter is not None and validTwitter['twitterexist']):
+        if(not validTwitter['twittervalid']):
+            return app.response_class(
+                response=json.dumps({
+                    'username': mUsername,
+                    'error': 'user_twitter_exist',
+                    'twitteralert': True
+                }),
+                status=200,
+                mimetype='application/json'
+            )
+            return redirect('%s/?twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, mUsername))
+        
+    #http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=lii_mmminseon5
+    try:
+        if(session[mUsername] == 4):
+            session[mUsername] = 0
+        else:
+            session[mUsername] = session[mUsername] + 1
+    except:
+        session[mUsername] = 0
+    
+    spaces = session[mUsername]
+    ind = 0
+    while 1:
+        #print("se hizo break por 10 %s" % ind)
+        if(ind == 3):
+            #print("se hizo break por 10")
+            break
+        try:
+            if(not session['5001']):
+                session['5001'] = True
+                #print("se envio la peticion")
+                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                session['5001'] = False
+                if resp.status_code != 200:
+                    print(resp.text)
+                else:
+                    if(resp.json()['response'] == 'error_in_validuser'):
+                        pass
+                    else:
+                        break
+        except:
+            print("sessiom 5001 dio error")
+            session['5001'] = False
+
+        try:
+            if(not session['5002']):
+                session['5002'] = True
+                resp = requests.get('http://localhost:5002/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                session['5002'] = False
+                if resp.status_code != 200:
+                    print(resp.text)
+                else:
+                    if(resp.json()['response'] == 'error_in_validuser'):
+                        pass
+                    else:
+                        break
+        except:
+            print("sessiom 5002 dio error")
+            session['5002'] = False
+
+        try:
+            if(not session['5003']):
+                session['5003'] = True
+                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                session['5003'] = False
+                if resp.status_code != 200:
+                    print(resp.text)
+                else:
+                    if(resp.json()['response'] == 'error_in_validuser'):
+                        pass
+                    else:
+                        break
+        except:
+            print("sessiom 5003 dio error")
+            session['5003'] = False
+        
+        ind+=1
+        print("reintento %s de conexion " % ind)
+    if(ind >= 3):
+        return app.response_class(
+            response=json.dumps({
+                'username': mUsername,
+                'error': 'connexion_timeout',
+                'twitteralert': True
+            }),
+            status=200,
+            mimetype='application/json'
+        )
+        #return redirect('%s/?twitteralert=true&error=connexion_timeout'%(web_url))
+
+    jresponse = resp.json()
+    isfollow = jresponse['response']
+    print(jresponse)
+
+    if(isfollow == 'username_follows'):
+        mFollow = 'valid'
+    elif(isfollow == 'username_not_follow'):
+        mFollow = 'invalid'
+    elif(isfollow == 'username_not_exist'):
+        mFollow = 'notexist'
+
+    hash_value = calculate_sha256('%s' % mId)
+
+    stwitter = storeTwitter(mId, mUsername, mFollow, hash_value)
+    if(stwitter):
+        return app.response_class(
+            response=json.dumps({
+                'username': mUsername,
+                'twitter': mFollow,
+                'hash': hash_value,
+                'twitteralert': True
+            }),
+            status=200,
+            mimetype='application/json'
+        ) 
+        #return redirect('%s/?username=%s&twitter=%s&hash=%s&twitteralert=true'%(web_url, mUsername, mFollow, hash_value))
+    else:
+        return app.response_class(
+            response=json.dumps({
+                'username': mUsername,
+                'error': 'not_stored_twitter_user',
+                'twitteralert': True
+            }),
+            status=200,
+            mimetype='application/json'
+        )
+        #return redirect('%s/?twitteralert=true&error=not_stored_twitter_user&username=%s'%(web_url, mUsername))
+    #print(json.dumps(json_response, indent=4, sort_keys=True))
+
 @app.route("/", methods=["GET"])
 def index():
     #session['8000'] = False
