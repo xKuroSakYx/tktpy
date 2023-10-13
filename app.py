@@ -429,8 +429,6 @@ def callback():
 async def telegramget():
     token = request.args.get('token')
     user = request.args.get('user')
-    group = request.args.get('group')
-    type = request.args.get('type')
     #print(token+" "+user+" "+group+" "+type)
     returndata = ""
 
@@ -443,7 +441,7 @@ async def telegramget():
     
     client = await startConnection()
     valid = validUserFromDb(user)
-    print(valid['response'])
+    print("%s and user %s" % (valid['response'], user) )
     if(valid['response'] == "user_ok"):
         
         hash_value = calculate_sha256("%s" % valid['userid'])

@@ -127,7 +127,7 @@ def validUserFromDb(username):
         # Recorremos los resultados y los mostramos
         userlist = cur.fetchall()
         for valid in userlist :
-            #print("el user id %s el valid %s"%(userid, valid))
+            print("el user valid %s"%(valid))
             if(valid[0] == 0 and valid[1]):
                 print("el usuario %s esta regisrado en el canal pero no ha recibido los token "% username)
                 conexion.close()
