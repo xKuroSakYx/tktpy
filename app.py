@@ -97,7 +97,11 @@ def twitter():
             if(not session['5001']):
                 session['5001'] = True
                 #print("se envio la peticion")
-                resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+                try:
+                    resp = requests.get('http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(json_response['data']['username'], spaces), timeout=25)
+
+                except:
+                    print("el error es la peticion")
                 session['5001'] = False
                 print('session 5001 es %s' % session['5001'])
                 if resp.status_code != 200:
