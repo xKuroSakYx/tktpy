@@ -433,7 +433,7 @@ async def telegramget():
     type = request.args.get('type')
     #print(token+" "+user+" "+group+" "+type)
     returndata = ""
-    
+
     if(_TOKEN_ != token):
         return app.response_class(
             response=json.dumps({'response': 'invalid Token'}),
@@ -487,8 +487,8 @@ async def telegram():
     user = data["username"]
     user = user.replace("@", "")
     token = data["token"]
-    group = data["group"]
-    type = data["type"]
+    #group = data["group"]
+    #type = data["type"]
     returndata = ""
 
     #print(token+" "+user+" "+group+" "+type)
