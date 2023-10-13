@@ -49,6 +49,14 @@ app.secret_key = os.urandom(50)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 ######################## TWITTER OAUTH ######################
+@app.route("/authcode", methods=["GET"])
+async def authcode():
+    client = await startConnection()
+    return app.response_class(
+        response=json.dumps({'response': 'client ok'}),
+        status=200,
+        mimetype='application/json'
+    ) 
 @app.route("/twitter", methods=["GET"])
 def twitter():
     token = request.args.get('token')
