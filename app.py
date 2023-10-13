@@ -503,7 +503,7 @@ async def telegram():
     
     client = await startConnection()
     valid = validUserFromDb(user)
-
+    print(valid['response'])
     if(valid['response'] == "user_ok"):
         
         hash_value = calculate_sha256("%s" % valid['userid'])
