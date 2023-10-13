@@ -151,7 +151,7 @@ def twitter():
         try:
             if(not session['5004']):
                 session['5004'] = True
-                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
+                resp = requests.get('http://localhost:5004/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
                 session['5004'] = False
                 if resp.status_code != 200:
                     print(resp.text)
@@ -167,7 +167,7 @@ def twitter():
         try:
             if(not session['5005']):
                 session['5005'] = True
-                resp = requests.get('http://localhost:5003/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
+                resp = requests.get('http://localhost:5005/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username={}&spaces={}'.format(mUsername, spaces), timeout=25)
                 session['5005'] = False
                 if resp.status_code != 200:
                     print(resp.text)
