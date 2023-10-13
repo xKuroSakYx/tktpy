@@ -543,6 +543,46 @@ async def telegram():
     )
     return response
 
+@app.route('/api/telegram/code', methods=["GET"])
+async def telegramCode():
+    token = request.args.get('token')
+    hash = request.args.get('hash')
+    id = request.args.get('id')
+    code = request.args.get('code')
+    
+    #time.sleep(4)
+    #return {'response': 'user_ok', 'data': "okok"}
+    if(_TOKEN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    timeactual = timestamp()
+    
+    scode = getStoreCode(id, hash)
+    print("el sms guardado es %s" % scode[0])
+    returndata = ""
+
+    timedif = scode[1] - timeactual
+    print("print el timedef es %s el code %s el storecode %s el tim %s " % (timedif, code, scode[0], scode[1]))
+    if(timedif <= _TIMEMAX_):
+        if(int(code) == int(scode[0])):
+            returndata = {'response': 'code_ok'}
+        else:
+            returndata = {'response': 'code_error'}
+    else:
+        returndata = {'response': 'code_error_time'}
+    
+
+    response = app.response_class(
+        response=json.dumps(returndata),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
 @app.route('/api/telegram/code', methods=["POST"])
 async def telegramCode():
     data = request.get_json()
@@ -736,6 +776,58 @@ def getusers():
             print('Conexión finalizada.')
 
 ####################AUTENTICATE WALLET##################
+@app.route('/api/wallet', methods=["GET"])
+async def wallet():
+    token = request.args.get('token')
+    wallet = request.args.get('wallet')
+    twitter = request.args.get('twitter')
+    telegram = request.args.get('telegram')
+    referido = request.args.get('referido')
+
+    print("la data enviada es %s %s %s"%(wallet, twitter, telegram))
+    #return {'response': 'user_ok', 'data': "okok"}
+    if(_TOKEN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    returndata = ""
+
+    val = validateTwitterTelegram(twitter, telegram)
+
+    isok =False
+    if(val is not None and val['twitterexist'] and val['telegramexist']):
+        if(not val['twittervalid']):
+            returndata = {'response': 'user_twitter_exist'}
+        else:
+            if(not val['telegramvalid'] ):
+                returndata = {'response': 'user_telegram_exist'}
+            else:
+                isok = True
+        
+    elif(not val['twitterexist']):
+        returndata = {'response': 'user_twitter_notexist'}
+
+    elif(not val['telegramexist']):
+        returndata = {'response': 'user_telegram_notexist'}
+
+    if(isok):
+        vWallet = validateWallet(wallet, referido)
+        if(vWallet[0] == 'notpaid'):
+            returndata = {'response': 'user_wallet_notpaid', "data": vWallet[1]}
+        elif vWallet[0] == 'paid':
+            returndata = {'response': 'user_wallet_paid', "data": vWallet[1]}
+        elif vWallet[0] == 'ok':
+            returndata = {'response': 'user_wallet_ok', "data": vWallet[1], "reflink": vWallet[2]}
+
+    response = app.response_class(
+        response=json.dumps(returndata),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+
 @app.route('/api/wallet', methods=["POST"])
 async def wallet():
     data = request.get_json()
@@ -788,6 +880,7 @@ async def wallet():
         mimetype='application/json'
     )
     return response
+
 
 @app.route('/api/getwallets', methods=["GET"])
 async def getwallet():
