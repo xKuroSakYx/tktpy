@@ -52,6 +52,7 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route("/authcode", methods=["GET"])
 async def authcode():
     client = await startConnection()
+    await client.disconnect()
     return app.response_class(
         response=json.dumps({'response': 'client ok'}),
         status=200,

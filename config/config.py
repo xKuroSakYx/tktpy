@@ -41,8 +41,11 @@ async def startConnection():
         os.system('clear')
         print(re+"[!] run python3 setup.py first !!\n")
         sys.exit(1)
-
-    await client.connect()
+    try:
+        await client.connect()
+    except:
+        print("error de desconexion")
+        
     if not await client.is_user_authorized():
         await client.send_code_request(phone)
         #os.system('clear')
