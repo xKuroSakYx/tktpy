@@ -465,11 +465,11 @@ async def telegramget():
         else:
             returndata = {'response': 'user_timeout'}
 
-    elif valid == "user_exist":
+    elif valid['response'] == "user_exist":
         returndata = {'response': 'user_exist'}
-    elif(valid == "user_not_registry"):
+    elif(valid['response'] == "user_not_registry"):
         returndata = {'response': "user_not_registry"}
-    elif valid == "user_error":
+    elif valid['response'] == "user_error":
         returndata = {'response': 'user_error'}
 
     await client.disconnect()
