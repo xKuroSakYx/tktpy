@@ -791,7 +791,7 @@ async def walletGet():
     telegram = request.args.get('telegram')
     referido = request.args.get('referido')
 
-    print("la data enviada es %s %s %s"%(wallet, twitter, telegram))
+    #print("la data enviada es %s %s %s"%(wallet, twitter, telegram))
     #return {'response': 'user_ok', 'data': "okok"}
     if(_TOKEN_ != token):
         return app.response_class(
