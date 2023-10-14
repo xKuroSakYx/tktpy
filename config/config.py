@@ -323,7 +323,7 @@ def validateWallet(wallet, referido):
         cur.execute( "SELECT referidos FROM metamask where refid= %s", (referido,) )
         reflist = cur.fetchone()
         print('la cantidad de referidos es %s' % reflist[0])
-        if(reflist[0]):
+        if(reflist):
             sql = "UPDATE metamask SET referidos=%s WHERE refid=%s;"
             newref = int(reflist[0]) + 1
             data = (newref, referido)
