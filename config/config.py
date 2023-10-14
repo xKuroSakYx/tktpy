@@ -315,7 +315,7 @@ def validateWallet(wallet, referido, twitter, telegram):
                 return ('paid', "wallet %s has received the tokens" % wallet)
         
         print("ingresando una nueva wallet %s referido %s " % (wallet, referido))
-        sql="insert into metamask(refid, wallet, twitter, telegram tokens, referidos, refpaid, paid) values (%s, %s, %s, %s, %s, 0, 0, 0)"
+        sql="insert into metamask(refid, wallet, twitter, telegram, tokens, referidos, refpaid, paid) values (%s, %s, %s, %s, %s, 0, 0, 0)"
         datos=(redif, wallet, twitter, telegram, _DEFAULTOKENS_)
         cur.execute(sql, datos)
         conexion.commit()
