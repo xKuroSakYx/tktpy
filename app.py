@@ -846,7 +846,7 @@ async def wallet():
     telegram = data["telegram"]
     referido = data["referido"]
 
-    print("la data enviada es %s %s %s"%(wallet, twitter, telegram))
+    print(" /api/wallet el enlace de referido es %s" % referido)
     #return {'response': 'user_ok', 'data': "okok"}
     if(_TOKEN_ != token):
         return app.response_class(
@@ -876,6 +876,8 @@ async def wallet():
 
     if(isok):
         vWallet = validateWallet(wallet, referido)
+        if(vWallet[0] == 'error'):
+            returndata = {'response': vWallet[1]}
         if(vWallet[0] == 'notpaid'):
             returndata = {'response': 'user_wallet_notpaid', "data": vWallet[1]}
         elif vWallet[0] == 'paid':
