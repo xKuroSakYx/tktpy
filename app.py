@@ -8,7 +8,7 @@ import mysql.connector
 import time
 import csv
 
-from config.config import startConnection, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter, getWallets
+from config.config import startConnection, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter, getWallets, getReferidos
 
 ######################## TWITTER OAUTH ######################
 from requests_oauthlib import OAuth1Session
@@ -783,6 +783,7 @@ def getusers():
             print('Conexión finalizada.')
 
 ####################AUTENTICATE WALLET##################
+## http://127.0.0.1:5000/api/wallet?token=tktk9wv7I8UU26FGGhtsSyMgZv8caqygNgPVMrdDw02IZlnRhbK3s&wallet=marloncruzoo&twitter=9179fb55a5fb0fe8f0a7bdbd6c906bbad24cf63b5bd9e598d026342a27a888a7&telegram=9fcb1a4f53f245788d9cb5b0a51d0fac42630f600963193d734ac37cb5ae05da&referido=2018181c452f44e583195440a3d9e9cc8bd4f3a25809409089078b9d2871b3cc
 @app.route('/api/wallet', methods=["GET"])
 async def walletGet():
     token = request.args.get('token')
@@ -928,7 +929,47 @@ async def getwallet():
         return send_file(csvWallet)
     else:
         return response
-    
+
+@app.route('/api/getrefwallets', methods=["GET"])
+async def getRefwallet():
+
+    token = request.args.get('token')
+    wallet = request.args.get('wallet')
+    refid = request.args.get('refid')
+
+    #return {'response': 'user_ok', 'data': "okok"}
+    print("token %s %s"%(_TOKEN_, token))
+    if(_TOKEN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    referidos = getReferidos(wallet, refid)
+    print(referidos['response'])
+    try:
+        
+        
+        if(referidos['response'] == 'ok'):
+            response = app.response_class(
+                response=json.dumps({'response': 'get_refdata_ok', 'ref_total': referidos['data'][0], 'ref_paid': referidos['data'][1]}),
+                status=200,
+                mimetype='application/json'
+            )
+        else:
+            response = app.response_class(
+                response=json.dumps({'response': 'get_refdata_error'}),
+                status=200,
+                mimetype='application/json'
+            )
+    except:
+        response = app.response_class(
+            response=json.dumps({'response': 'get_refdata_error'}),
+            status=200,
+            mimetype='application/json'
+        )
+    return response
+
 @app.route('/api/getwalletscsv', methods=["GET"])
 async def getwalletcsv():
 

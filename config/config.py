@@ -365,10 +365,8 @@ def getWallets(basedir):
 
         # Recorremos los resultados y los mostramos
         returndata = ""
-        _token = 0
-        _ref_paid = 0
-        _ref_token = 0
-        _ref_paid_total = 0
+        
+        
         isFile = False
 
         walletlist = cur.fetchall()
@@ -378,6 +376,11 @@ def getWallets(basedir):
         with open(filename,"w",encoding='UTF-8') as f:
             writer = csv.writer(f, delimiter=",", lineterminator="\n")
             for wallet, paid, referidos_tot, refpaid in walletlist :
+                _token = 0
+                _ref_paid = 0
+                _ref_token = 0
+                _ref_paid_total = 0
+
                 if(paid == 1):
                     _token = 0
                 else:
@@ -390,7 +393,9 @@ def getWallets(basedir):
                     _ref_token = (_ref_paid / 3) * 5
                     _ref_paid_total = _ref_paid + refpaid
 
-                _token = _token + _ref_token
+                _token = int(_token + _ref_token)
+                if _token == 0:
+                    continue
 
                 sql = "UPDATE metamask SET refpaid=%s, paid=1 where wallet=%s"
                 data = (_ref_paid_total, wallet)
@@ -409,6 +414,42 @@ def getWallets(basedir):
     except (Exception) as error:
         print(error)
     finally:
+        if conexion is not None:
+            conexion.close()
+            print('Conexión finalizada.')
+
+def getReferidos(wallet, refid):
+    #try:
+        conexion = None
+        #params = config()
+        params = config('x6nge')
+        #print(params)
+    
+        # Conexion al servidor de MySql
+        print('Conectando a la base de datos MySql...validateWallet')
+        conexion = mysql.connector.connect(**params)
+        #print("se conectpo a la base de datos")
+        # creación del cursor
+        cur = conexion.cursor()
+        isexist = False
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        #cur.execute("CREATE INDEX userids ON telegram (userid)")
+        conexion.commit()
+
+        cur.execute( "SELECT referidos, refpaid FROM metamask where wallet=%s and refid=%s", (wallet, refid))
+
+        # Recorremos los resultados y los mostramos
+        returndata = ""
+        
+        isFile = False
+
+        walletlist = cur.fetchone()
+        return {'response': 'ok', 'data': walletlist}
+        
+    #except (Exception) as error:
+        return {'response': 'error'}
+        print(error)
+    #finally:
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
