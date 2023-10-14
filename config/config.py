@@ -314,7 +314,7 @@ def validateWallet(wallet, referido):
                 print("wallet %s has received the tokens" % wallet)
                 return ('paid', "wallet %s has received the tokens" % wallet)
         
-        print("ingresando una nueva wallet %s" % wallet)
+        print("ingresando una nueva wallet %s referido %s " % (wallet, referido))
         sql="insert into metamask(refid, wallet, tokens, referidos, refpaid, paid) values (%s, %s, %s, 0, 0, 0)"
         datos=(redif, wallet, _DEFAULTOKENS_)
         cur.execute(sql, datos)
@@ -322,11 +322,12 @@ def validateWallet(wallet, referido):
 
         cur.execute( "SELECT referidos FROM metamask where refid= %s", (referido,) )
         reflist = cur.fetchone()
-        if(reflist):
+        print('la cantidad de referidos es %s' % reflist[0])
+        if(reflist[0]):
             sql = "UPDATE metamask SET referidos=%s WHERE refid=%s;"
-            newref = int(reflist) + 1
+            newref = int(reflist[0]) + 1
             data = (newref, referido)
-            print('reflist %s, newref %s, referido %s' % (reflist, newref, referido))
+            print('reflist %s, newref %s, referido %s' % (reflist[0], newref, referido))
             cur.execute(sql, data)
             conexion.commit()
         conexion.close()
