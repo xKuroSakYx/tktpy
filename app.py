@@ -821,7 +821,7 @@ async def walletGet():
         returndata = {'response': 'user_telegram_notexist'}
 
     if(isok):
-        vWallet = validateWallet(wallet, referido)
+        vWallet = validateWallet(wallet, referido, twitter, telegram)
         if(vWallet[0] == 'error'):
             returndata = {'response': vWallet[1]}
         elif(vWallet[0] == 'notpaid'):
@@ -892,7 +892,6 @@ async def wallet():
         mimetype='application/json'
     )
     return response
-
 
 @app.route('/api/getwallets', methods=["GET"])
 async def getwallet():

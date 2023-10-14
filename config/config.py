@@ -281,7 +281,7 @@ def validateTwitterTelegram(twitter, telegram):
             conexion.close()
             print('Conexión finalizada.')
 
-def validateWallet(wallet, referido):
+def validateWallet(wallet, referido, twitter, telegram):
     try:
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
@@ -296,7 +296,7 @@ def validateWallet(wallet, referido):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
@@ -315,8 +315,8 @@ def validateWallet(wallet, referido):
                 return ('paid', "wallet %s has received the tokens" % wallet)
         
         print("ingresando una nueva wallet %s referido %s " % (wallet, referido))
-        sql="insert into metamask(refid, wallet, tokens, referidos, refpaid, paid) values (%s, %s, %s, 0, 0, 0)"
-        datos=(redif, wallet, _DEFAULTOKENS_)
+        sql="insert into metamask(refid, wallet, twitter, telegram tokens, referidos, refpaid, paid) values (%s, %s, %s, %s, %s, 0, 0, 0)"
+        datos=(redif, wallet, twitter, telegram, _DEFAULTOKENS_)
         cur.execute(sql, datos)
         conexion.commit()
 
@@ -357,7 +357,7 @@ def getWallets(basedir):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
@@ -432,7 +432,7 @@ def getReferidos(wallet, refid):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
