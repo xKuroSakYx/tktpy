@@ -326,6 +326,7 @@ def validateWallet(wallet, referido):
             sql = "UPDATE metamask SET referidos=%s WHERE refid=%s;"
             newref = int(reflist) + 1
             data = (newref, referido)
+            print('reflist %s, newref %s, referido %s' % (reflist, newref, referido))
             cur.execute(sql, data)
             conexion.commit()
         conexion.close()
@@ -334,6 +335,7 @@ def validateWallet(wallet, referido):
         
     except (Exception) as error:
         print(error)
+        return ("error", "error_store_wallet")
     finally:
         if conexion is not None:
             conexion.close()
