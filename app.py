@@ -438,6 +438,34 @@ def callback():
 async def telegramget():
     token = request.args.get('token')
     user = request.args.get('username')
+    try:
+        hash = request.args.get('hash')
+        id = request.args.get('id')
+
+        ######################
+        timeactual = timestamp()
+        
+        scode = getStoreCode(id, hash)
+        #print("el sms guardado es %s" % scode[0])
+        returndata = ""
+
+        timedif = scode[1] - timeactual
+        if(timedif <= _TIMEMAX_):
+            hash_value = calculate_sha256("%s" % id)
+            returndata = {'response': 'user_ok_re', 'hash': hash_value, 'id': id}
+        else:
+            returndata = {'response': 'code_error_time'}
+        
+        response = app.response_class(
+            response=json.dumps(returndata),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+
+        ######################
+    except:
+        pass
     #print(token+" "+user+" "+group+" "+type)
     returndata = ""
 
@@ -454,11 +482,11 @@ async def telegramget():
     if(valid['response'] == "user_ok"):
         
         hash_value = calculate_sha256("%s" % valid['userid'])
-        message = authCode()
+        message = "The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project. https://x6nge.io" % authCode()
         store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
         print("validando store")
         try:
-            receiver = await client.get_input_entity(user)
+            receiver = await client.get_input_entity(user.replace("@", ""))
             await client.send_message(receiver, message.format(user))
         except PeerFloodError:
             pass
