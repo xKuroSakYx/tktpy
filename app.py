@@ -495,12 +495,12 @@ async def telegramget():
         )
     
     valid = validUserFromDb(user)
-    print("%s and user %s" % (valid['response'], user) )
+    print("%s and user %s" % (valid['response'], user))
     if(valid['response'] == "user_ok"):
         
         hash_value = calculate_sha256("%s" % valid['userid'])
         smscode = authCode()
-        message = "Hello @{}, The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project. https://x6nge.io" % smscode
+        message = "Hello @{}, The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project https://x6nge.io, Twitter: https://x.com/x6nge o Telegram chanel https://t.me/thekeyoftrueTKT to stay up to date with the latest happenings. Thank you for your support." % smscode
         store = storeCode(valid['userid'], smscode, timestamp(), _TIMEMIN_)
 
         try:
@@ -521,6 +521,15 @@ async def telegramget():
     elif valid['response'] == "user_exist":
         returndata = {'response': 'user_exist'}
     elif(valid['response'] == "user_not_registry"):
+        try:
+            message = 'Hello @{}, you need to join the telegram channel https://t.me/thekeyoftrueTKT, if you are already a subscriber, join the group and then verify your username again in the airdrop. Thank you for your support.'
+            receiver = await client.get_input_entity(user.replace("@", ""))
+            await client.send_message(receiver, message.format(user))
+        except PeerFloodError:
+            pass
+            #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
+        except Exception as e:
+            pass
         returndata = {'response': "user_not_registry"}
     elif valid['response'] == "user_error":
         returndata = {'response': 'user_error'}
