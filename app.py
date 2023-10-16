@@ -476,7 +476,24 @@ async def telegramget():
             mimetype='application/json'
         )
     
-    client = await startConnection()
+    ind = 0
+    while 1:
+        try:
+            client = await startConnection()
+            break
+        except:
+            time.sleep(0.3)
+            ind+=1
+        if ind == 100:
+            break
+    
+    if ind >= 100:
+        return app.response_class(
+            response=json.dumps({'response': 'user_error'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
     valid = validUserFromDb(user)
     print("%s and user %s" % (valid['response'], user) )
     if(valid['response'] == "user_ok"):
@@ -484,6 +501,8 @@ async def telegramget():
         hash_value = calculate_sha256("%s" % valid['userid'])
         message = "The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project. https://x6nge.io" % authCode()
         store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
+
+        sendMessage = request.get('')
         print("validando store")
         try:
             receiver = await client.get_input_entity(user.replace("@", ""))
@@ -525,7 +544,7 @@ async def telegram():
     #group = data["group"]
     #type = data["type"]
     returndata = ""
-
+    client = None 
     #print(token+" "+user+" "+group+" "+type)
     #time.sleep(4)
     #return {'response': 'user_ok', 'data': "okok"}
@@ -535,8 +554,24 @@ async def telegram():
             status=200,
             mimetype='application/json'
         )
+    ind = 0
+    while 1:
+        try:
+            client = await startConnection()
+            break
+        except:
+            time.sleep(0.3)
+            ind+=1
+        if ind == 100:
+            break
     
-    client = await startConnection()
+    if ind >= 100:
+        return app.response_class(
+            response=json.dumps({'response': 'user_error'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
     valid = validUserFromDb(user)
     
     if(valid['response'] == "user_ok"):
