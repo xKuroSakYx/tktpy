@@ -501,9 +501,7 @@ async def telegramget():
         hash_value = calculate_sha256("%s" % valid['userid'])
         message = "The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project. https://x6nge.io" % authCode()
         store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
-
-        sendMessage = request.get('')
-        print("validando store")
+        
         try:
             receiver = await client.get_input_entity(user.replace("@", ""))
             await client.send_message(receiver, message.format(user))
