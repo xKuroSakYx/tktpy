@@ -1000,6 +1000,43 @@ async def getwallet():
     else:
         return response
 
+@app.route('/api/getpruwallets', methods=["GET"])
+async def getPruwallet():
+
+    token = request.args.get('token')
+    user = request.args.get('user')
+
+    #return {'response': 'user_ok', 'data': "okok"}
+    if(_TOKEN_ADMIN_ != token):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Token'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    if(user != _USERADMIN_):
+        return app.response_class(
+            response=json.dumps({'response': 'invalid Username'}),
+            status=200,
+            mimetype='application/json'
+        )
+    
+    csvWallet = getWallets(os.getcwd()+"/csv/", True)
+    csvWallet = os.path.join(os.getcwd()+"/csv/", csvWallet)
+
+    response = app.response_class(
+        response=json.dumps({'response': 'No Se pudo Devolver el archivo intente de nuevo'}),
+        status=200,
+        mimetype='application/json'
+    )
+    print(csvWallet)
+    if csvWallet:
+        #file_path = os.path.join(os.getcwd()+"csv/", csvWallet)
+        return send_file(csvWallet)
+    else:
+        return response
+
+
 @app.route('/api/getrefwallets', methods=["GET"])
 async def getRefwallet():
 

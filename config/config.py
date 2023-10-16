@@ -343,7 +343,7 @@ def validateWallet(wallet, referido, twitter, telegram):
             conexion.close()
             print('Conexión finalizada.')
 
-def getWallets(basedir):
+def getWallets(basedir, prueva=False):
     try:
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
@@ -397,11 +397,11 @@ def getWallets(basedir):
                 _token = int(_token + _ref_token)
                 if _token == 0:
                     continue
-
-                sql = "UPDATE metamask SET refpaid=%s, paid=1 where wallet=%s"
-                data = (_ref_paid_total, wallet)
-                cur.execute(sql, data)
-                conexion.commit()
+                if(not prueva):
+                    sql = "UPDATE metamask SET refpaid=%s, paid=1 where wallet=%s"
+                    data = (_ref_paid_total, wallet)
+                    cur.execute(sql, data)
+                    conexion.commit()
 
                 writer.writerow([wallet, _token])
         
