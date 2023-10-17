@@ -239,19 +239,18 @@ def validateTwitterTelegram(twitter, telegram):
         twittervalid = False
         twitterexist = False
         twitterban = False
-        if(vTwitter[1] >= 1):
-            twitterban = True
-        elif(vTwitter[0] and vTwitter[0] is not None):
+        
+        if(vTwitter is not None):
             twitterexist = True
-            if(vTwitter[0] == 0):
+            print("el v twitter ban  %s 5s mas usuername %s vtwitter0 %s  "%(vTwitter[1], twitter, vTwitter[0]))
+            if(vTwitter[1] >= 1):
+                twitterban = True
+            elif(vTwitter[0] == 0):
                 twittervalid = True
             elif(vTwitter[0] == 1):
                 twittervalid = False
 
-        if(twittervalid):
-            cur.execute( "UPDATE twitter SET valid=1 where mhash=%s", (twitter,) )
-            conexion.commit()
-            print("______Se seteo ese userr a valid 1 en twitter_______")
+        
         ################################ TELEGRAM #################################
         
         # creación del cursor
@@ -266,19 +265,15 @@ def validateTwitterTelegram(twitter, telegram):
         telegramvalid = False
         telegramexist = False
         telegramban = False
-        if(vTelegram[1] >= 1):
-            telegramban = True
-        elif(vTelegram[0] and vTelegram[0] is not None):
+        
+        if(vTelegram is not None):
             telegramexist = True
-            if(vTelegram[0] == 0):
+            if(vTelegram[1] >= 1):
+                telegramban = True
+            elif(vTelegram[0] == 0):
                 telegramvalid = True
             elif(vTelegram[0] == 1):
                 telegramvalid = False
-
-        if(telegramvalid):
-            cur.execute( "UPDATE telegram SET valid=1 where mhash=%s", (telegram,) )
-            conexion.commit()
-            print("______Se teteo ese userr a valid 1 en telegram_______")
 
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': twitterban, "telegramexist": telegramexist, "telegramvalid": telegramvalid, 'telegramban': telegramban,}
         """       
@@ -289,8 +284,9 @@ def validateTwitterTelegram(twitter, telegram):
             conexion.close()
             print('Conexión finalizada.')
     """
-def validateWallet(wallet, referido, twitter, telegram):
+def validateWallet(wallet, referido, twitter, telegram, twittervalid, telegramvalid):
     try:
+        telegram = telegram.replace('"', '')
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
         conexion = None
         #params = config()
@@ -316,14 +312,37 @@ def validateWallet(wallet, referido, twitter, telegram):
         for paid, ban in walletlist:
             #print("el user id %s el valid %s"%(userid, valid))
             if(ban >= 1):
+                print("la wallet esta banneada twitter %s " % twitter)
+                cur.execute( "UPDATE twitter SET valid=1, ban='%s' where mhash=%s", (ban, twitter) )
+                conexion.commit()
+                cur.execute( "UPDATE telegram SET valid=1, ban='%s' where mhash=%s", (ban, telegram) )
+                conexion.commit()
                 return ('banned', "wallet %s is banned" % wallet)
             if(paid == 0):
                 print("wallet %s finished the process but has not received the tokens" % wallet)
+                cur.execute( "UPDATE twitter SET valid=1 where mhash=%s", (twitter,) )
+                conexion.commit()
+                cur.execute( "UPDATE telegram SET valid=1 where mhash=%s", (telegram,) )
+                conexion.commit()
                 return ('notpaid', "wallet %s finished the process but has not received the tokens" % wallet)
             elif(paid == 1):
                 print("wallet %s has received the tokens" % wallet)
+                cur.execute( "UPDATE twitter SET valid=1 where mhash=%s", (twitter,) )
+                conexion.commit()
+                cur.execute( "UPDATE telegram SET valid=1 where mhash=%s", (telegram,) )
+                conexion.commit()
                 return ('paid', "wallet %s has received the tokens" % wallet)
         
+        if(twittervalid):
+            cur.execute( "UPDATE twitter SET valid=1 where mhash=%s", (twitter,) )
+            conexion.commit()
+            print("______Se seteo ese userr a valid 1 en twitter_______")
+
+        if(telegramvalid):
+            cur.execute( "UPDATE telegram SET valid=1 where mhash=%s", (telegram,) )
+            conexion.commit()
+            print("______Se teteo ese userr a valid 1 en telegram_______")
+
         print("ingresando una nueva wallet %s referido %s " % (wallet, referido))
         sql="insert into metamask(refid, wallet, twitter, telegram, tokens, referidos, refpaid, paid) values (%s, %s, %s, %s, %s, 0, 0, 0)"
         datos=(redif, wallet, twitter, telegram, _DEFAULTOKENS_)

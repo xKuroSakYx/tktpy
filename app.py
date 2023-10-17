@@ -922,7 +922,7 @@ async def walletGet():
         returndata = {'response': 'user_telegram_notexist'}
 
     if(isok):
-        vWallet = validateWallet(wallet, referido, twitter, telegram)
+        vWallet = validateWallet(wallet, referido, twitter, telegram, val['twittervalid'], val['telegramvalid'])
         if(vWallet[0] == 'banned'):
             returndata = {'response': 'user_wallet_banned'}
         elif(vWallet[0] == 'error'):
