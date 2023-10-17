@@ -397,6 +397,7 @@ def getWallets(basedir, prueva=False):
                 _token = int(_token + _ref_token)
                 if _token == 0:
                     continue
+                print("informacion de wallet %s %s"%(_token, _ref_paid_total))
                 if(not prueva):
                     sql = "UPDATE metamask SET refpaid=%s, paid=1 where wallet=%s"
                     data = (_ref_paid_total, wallet)
@@ -411,14 +412,14 @@ def getWallets(basedir, prueva=False):
             return namefile
         else:
             return False
-        
+           
     except (Exception) as error:
         print(error)
     finally:
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
-
+    
 def getReferidos(wallet, refid):
     #try:
         conexion = None
