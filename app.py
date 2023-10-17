@@ -901,13 +901,12 @@ async def walletGet():
     isok =False
     if(val is None):
         returndata = {'response': 'user_error_valid'}
-
+    elif(val['twitterban']):
+        returndata = {'response': 'user_twitter_banned'}
+    elif(val['telegramban']):
+        returndata = {'response': 'user_telegram_banned'}
     elif(val['twitterexist'] and val['telegramexist']):
-        if(val['twitterban']):
-            returndata = {'response': 'user_twitter_banned'}
-        elif(val['telegramban']):
-            returndata = {'response': 'user_telegram_banned'}
-        elif(not val['twittervalid']):
+        if(not val['twittervalid']):
             returndata = {'response': 'user_twitter_exist'}
         else:
             if(not val['telegramvalid'] ):
