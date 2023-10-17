@@ -94,7 +94,7 @@ def twitter():
                 mimetype='application/json'
             )
             return redirect('%s/?twitteralert=true&error=user_twitter_exist&username=%s'%(web_url, mUsername))
-        
+    print("llego aquiiiiiiiiiiiiiiiiiii") 
     #http://localhost:5001/auth?token=tktk9wv7I8UU26FGGhtsSyMgZvmco8caqygNgPVMrdDw02IZlnRhbK3s&username=lii_mmminseon5
     try:
         if(session[mUsername] == 4):

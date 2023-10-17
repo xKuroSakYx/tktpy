@@ -592,16 +592,14 @@ def validateTwitter(id, username):
 
         cur.execute( "SELECT valid, ban FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
         vTwitter = cur.fetchone()
-        print("la columns es ")
-        print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter is not None and vTwitter[1] is not None):
-            print('vTwitter su valor es %s' % vTwitter)
+        if(vTwitter is not None and vTwitter[1] is not None): 
             if vTwitter[1] >= 1:
+                print('Usuario baneado su valor es %s' % username)
                 return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
 
-        if(vTwitter[0] and vTwitter[0] is not None):
+        if(vTwitter[0] is not None and vTwitter[0]):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
@@ -609,15 +607,15 @@ def validateTwitter(id, username):
                 twittervalid = False
 
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
-        
+            
     except (Exception) as error:
-        return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
+        return {"twitterexist": False, "twittervalid": False, 'twitterban': False}
         print(error)
     finally:
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
-
+    
 def getTime(separador="_"):
     timeA = datetime.now()
 
