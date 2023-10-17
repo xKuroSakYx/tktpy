@@ -899,6 +899,7 @@ async def walletGet():
     val = validateTwitterTelegram(twitter, telegram)
 
     isok =False
+    print('twitter van %s'% val['twitterban'])
     if(val is None):
         returndata = {'response': 'user_error_valid'}
     elif(val['twitterban']):
@@ -915,7 +916,6 @@ async def walletGet():
                 isok = True
         
     elif(not val['twitterexist']):
-        print("los datos a validar son %s %s %s %s %s %s" % val)
         returndata = {'response': 'user_twitter_notexist'}
 
     elif(not val['telegramexist']):
