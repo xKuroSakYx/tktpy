@@ -59,6 +59,7 @@ async def authcode():
         mimetype='application/json'
     ) 
 
+#http://127.0.0.1:5000/twitter?token=tktk9wv7I8UU26FGGhtsSyMgZv8caqygNgPVMrdDw02IZlnRhbK3s&username=DarkRaimbos&id=1702685702037577731
 @app.route("/twitter", methods=["GET"])
 def twitter():
     token = request.args.get('token')
@@ -897,8 +898,11 @@ async def walletGet():
 
     val = validateTwitterTelegram(twitter, telegram)
 
-    isok =False  
-    if(val is not None and val['twitterexist'] and val['telegramexist']):
+    isok =False
+    if(val is None):
+        returndata = {'response': 'user_error_valid'}
+
+    elif(val['twitterexist'] and val['telegramexist']):
         if(val['twitterban']):
             returndata = {'response': 'user_twitter_banned'}
         elif(val['telegramban']):

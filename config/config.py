@@ -281,14 +281,14 @@ def validateTwitterTelegram(twitter, telegram):
             print("______Se teteo ese userr a valid 1 en telegram_______")
 
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': twitterban, "telegramexist": telegramexist, "telegramvalid": telegramvalid, 'telegramban': telegramban,}
-        
+           
     except (Exception) as error:
         print(error)
     finally:
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
-
+    
 def validateWallet(wallet, referido, twitter, telegram):
     try:
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
