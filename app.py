@@ -916,6 +916,7 @@ async def walletGet():
                 isok = True
         
     elif(not val['twitterexist']):
+        print("los datos a validar son %s %s %s %s %s %s" % val)
         returndata = {'response': 'user_twitter_notexist'}
 
     elif(not val['telegramexist']):
