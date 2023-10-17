@@ -597,6 +597,7 @@ def validateTwitter(id, username):
         twittervalid = False
         twitterexist = False
         if(vTwitter[1] is not None):
+            print('vTwitter su valor es %s' % vTwitter)
             if vTwitter[1] >= 1:
                 return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
 
