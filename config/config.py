@@ -415,8 +415,8 @@ def getWallets(basedir, prueva=False):
                     data = (_ref_paid_total, wallet)
                     cur.execute(sql, data)
                     conexion.commit()
-
-                writer.writerow([wallet.strip(), _token])
+                wallet = str(wallet).strip()
+                writer.writerow([wallet, _token])
         
             isFile = True
         
