@@ -596,7 +596,7 @@ def validateTwitter(id, username):
         print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter[1] is not None):
+        if(vTwitter is not None and vTwitter[1] is not None):
             print('vTwitter su valor es %s' % vTwitter)
             if vTwitter[1] >= 1:
                 return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
@@ -611,6 +611,7 @@ def validateTwitter(id, username):
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
         
     except (Exception) as error:
+        return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
         print(error)
     finally:
         if conexion is not None:
