@@ -122,16 +122,18 @@ def validUserFromDb(username):
         
         # creando la tabla si no existe
         #tktid bigint(255) not null,
-        cur.execute("CREATE TABLE IF NOT EXISTS telegram (id bigint(255) not null AUTO_INCREMENT, userid bigint(255) not null, username varchar(255) not null, valid int(1) not null, mhash varchar(255) not null, primary key (id))  ENGINE = InnoDB")
+        cur.execute("CREATE TABLE IF NOT EXISTS telegram (id bigint(255) not null AUTO_INCREMENT, userid bigint(255) not null, username varchar(255) not null, valid int(1) not null, mhash varchar(255) not null, ban int(1) not null DEFAULT 0, primary key (id))  ENGINE = InnoDB")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
 
-        cur.execute( "SELECT valid, userid FROM telegram where username=%s", (username, ) )
+        cur.execute( "SELECT valid, userid, ban FROM telegram where username=%s", (username, ) )
 
         # Recorremos los resultados y los mostramos
         userlist = cur.fetchall()
         for valid in userlist :
             #print("el user valid %s" %(valid))
-            if(valid[0] == 0 and valid[1]):
+            if(valid[2] == 1):
+                return {'response': "user_banned", 'userid': valid[1]}
+            elif(valid[0] == 0 and valid[1]):
                 print("el usuario %s esta regisrado en el canal pero no ha recibido los token "% username)
                 conexion.close()
                 return {'response': "user_ok", 'userid': valid[1]}
@@ -231,12 +233,15 @@ def validateTwitterTelegram(twitter, telegram):
         cur = conexion.cursor()
 
         twitter = twitter.replace('"', '')
-        cur.execute( "SELECT valid FROM twitter where mhash=%s LIMIT 0, 1", (twitter, ) )
+        cur.execute( "SELECT valid, ban FROM twitter where mhash=%s LIMIT 0, 1", (twitter, ) )
         vTwitter = cur.fetchone()
         print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter and vTwitter is not None):
+        twitterban = False
+        if(vTwitter[1] == 1):
+            twitterban = True
+        elif(vTwitter[0] and vTwitter[0] is not None):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
@@ -255,12 +260,15 @@ def validateTwitterTelegram(twitter, telegram):
         # creando la tabla si no existe
         telegram = telegram.replace('"', '')
         print("__________%s____________"%telegram)
-        cur.execute( "SELECT valid FROM telegram where mhash=%s", (telegram,) )
+        cur.execute( "SELECT valid, ban FROM telegram where mhash=%s", (telegram,) )
         vTelegram = cur.fetchone()
         print(vTelegram)
         telegramvalid = False
         telegramexist = False
-        if(vTelegram and vTelegram is not None):
+        telegramban = False
+        if(vTelegram[1] == 1):
+            telegramban = True
+        elif(vTelegram[0] and vTelegram[0] is not None):
             telegramexist = True
             if(vTelegram[0] == 0):
                 telegramvalid = True
@@ -272,7 +280,7 @@ def validateTwitterTelegram(twitter, telegram):
             conexion.commit()
             print("______Se teteo ese userr a valid 1 en telegram_______")
 
-        return {"twitterexist": twitterexist, "twittervalid": twittervalid, "telegramexist": telegramexist, "telegramvalid": telegramvalid}
+        return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': twitterban, "telegramexist": telegramexist, "telegramvalid": telegramvalid, 'telegramban': telegramban,}
         
     except (Exception) as error:
         print(error)
@@ -296,17 +304,19 @@ def validateWallet(wallet, referido, twitter, telegram):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, ban int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
-        cur.execute( "SELECT paid FROM metamask where wallet= %s", (wallet,) )
+        cur.execute( "SELECT paid, ban FROM metamask where wallet= %s", (wallet,) )
 
         # Recorremos los resultados y los mostramos
         returndata = ""
         walletlist = cur.fetchall()
-        for paid in walletlist :
+        for paid, ban in walletlist:
             #print("el user id %s el valid %s"%(userid, valid))
+            if(ban == 1):
+                return ('banned', "wallet %s is banned" % wallet)
             if(paid == 0):
                 print("wallet %s finished the process but has not received the tokens" % wallet)
                 return ('notpaid', "wallet %s finished the process but has not received the tokens" % wallet)
@@ -358,11 +368,11 @@ def getWallets(basedir, prueva=False):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, ban int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
-        cur.execute( "SELECT wallet, paid, referidos, refpaid FROM metamask")
+        cur.execute( "SELECT wallet, paid, referidos, refpaid, ban FROM metamask")
 
         # Recorremos los resultados y los mostramos
         returndata = ""
@@ -376,7 +386,9 @@ def getWallets(basedir, prueva=False):
         print("el filename es %s"%filename)
         with open(filename,"w",encoding='UTF-8') as f:
             writer = csv.writer(f, delimiter=",", lineterminator="\n")
-            for wallet, paid, referidos_tot, refpaid in walletlist :
+            for wallet, paid, referidos_tot, refpaid, ban in walletlist :
+                if(ban == 1):
+                    continue
                 _token = 0
                 _ref_paid = 0
                 _ref_token = 0
@@ -434,7 +446,7 @@ def getReferidos(wallet, refid):
         # creación del cursor
         cur = conexion.cursor()
         isexist = False
-        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, primary key (id))")
+        cur.execute("CREATE TABLE IF NOT EXISTS metamask (id bigint(255) not null AUTO_INCREMENT, refid varchar(255) not null, wallet varchar(255) not null, twitter varchar(255) not null, telegram varchar(255) not null, tokens bigint(255) not null, referidos bigint(255) not null, refpaid bigint(255) not null, paid int(1) not null, ban int(1) not null, primary key (id))")
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
@@ -578,20 +590,24 @@ def validateTwitter(id, username):
         cur.execute("CREATE TABLE IF NOT EXISTS twitter (id bigint(255) not null AUTO_INCREMENT , userid bigint(255) not null, username varchar(255) not null, follow varchar(50) not null, mhash varchar(255) not null, valid int(1) not null, primary key (id))")
         conexion.commit()
 
-        cur.execute( "SELECT valid FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
+        cur.execute( "SELECT valid, ban FROM twitter where userid=%s AND username=%s LIMIT 0, 1", (id, username) )
         vTwitter = cur.fetchone()
         print("la columns es ")
         print(vTwitter)
         twittervalid = False
         twitterexist = False
-        if(vTwitter and vTwitter is not None):
+        if(vTwitter[1] is not None):
+            if vTwitter[1] == 1:
+                return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
+
+        if(vTwitter[0] and vTwitter[0] is not None):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
             elif(vTwitter[0] == 1):
                 twittervalid = False
 
-        return {"twitterexist": twitterexist, "twittervalid": twittervalid}
+        return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
         
     except (Exception) as error:
         print(error)

@@ -72,6 +72,16 @@ def twitter():
         )
     
     validTwitter = validateTwitter(mId, mUsername)
+    if(validTwitter['twitterban']):
+        return app.response_class(
+            response=json.dumps({
+                'username': mUsername,
+                'error': 'user_twitter_banned',
+                'twitteralert': True
+            }),
+            status=200,
+            mimetype='application/json'
+        )
     if(validTwitter is not None and validTwitter['twitterexist']):
         if(not validTwitter['twittervalid']):
             return app.response_class(
@@ -439,31 +449,33 @@ async def telegramget():
     token = request.args.get('token')
     user = request.args.get('username')
     try:
-        hash = request.args.get('hash')
-        id = request.args.get('id')
+        if(valid['response'] != "user_banned"):
+            hash = request.args.get('hash')
+            id = request.args.get('id')
 
-        ######################
-        timeactual = timestamp()
-        
-        scode = getStoreCode(id, hash)
-        #print("el sms guardado es %s" % scode[0])
-        returndata = ""
+            ######################
+            timeactual = timestamp()
+            valid = validUserFromDb(user)
+            
+            scode = getStoreCode(id, hash)
+            #print("el sms guardado es %s" % scode[0])
+            returndata = ""
 
-        timedif = scode[1] - timeactual
-        if(timedif <= _TIMEMAX_):
-            hash_value = calculate_sha256("%s" % id)
-            returndata = {'response': 'user_ok_re', 'hash': hash_value, 'id': id}
-        else:
-            returndata = {'response': 'code_error_time'}
-        
-        response = app.response_class(
-            response=json.dumps(returndata),
-            status=200,
-            mimetype='application/json'
-        )
-        return response
+            timedif = scode[1] - timeactual
+            if(timedif <= _TIMEMAX_):
+                hash_value = calculate_sha256("%s" % id)
+                returndata = {'response': 'user_ok_re', 'hash': hash_value, 'id': id}
+            else:
+                returndata = {'response': 'code_error_time'}
+            
+            response = app.response_class(
+                response=json.dumps(returndata),
+                status=200,
+                mimetype='application/json'
+            )
+            return response
 
-        ######################
+            ######################
     except:
         pass
     #print(token+" "+user+" "+group+" "+type)
@@ -496,7 +508,9 @@ async def telegramget():
     try:
         valid = validUserFromDb(user)
         print("%s and user %s" % (valid['response'], user))
-        if(valid['response'] == "user_ok"):
+        if(valid['response'] == "user_banned"):
+            returndata = {'response': 'user_telegram_banned'}
+        elif(valid['response'] == "user_ok"):
             
             hash_value = calculate_sha256("%s" % valid['userid'])
             smscode = authCode()
@@ -881,9 +895,13 @@ async def walletGet():
 
     val = validateTwitterTelegram(twitter, telegram)
 
-    isok =False
+    isok =False  
     if(val is not None and val['twitterexist'] and val['telegramexist']):
-        if(not val['twittervalid']):
+        if(val['twitterban']):
+            returndata = {'response': 'user_twitter_banned'}
+        elif(val['telegramban']):
+            returndata = {'response': 'user_telegram_banned'}
+        elif(not val['twittervalid']):
             returndata = {'response': 'user_twitter_exist'}
         else:
             if(not val['telegramvalid'] ):
@@ -899,7 +917,9 @@ async def walletGet():
 
     if(isok):
         vWallet = validateWallet(wallet, referido, twitter, telegram)
-        if(vWallet[0] == 'error'):
+        if(vWallet[0] == 'banned'):
+            returndata = {'response': 'user_wallet_banned'}
+        elif(vWallet[0] == 'error'):
             returndata = {'response': vWallet[1]}
         elif(vWallet[0] == 'notpaid'):
             returndata = {'response': 'user_wallet_notpaid', "data": vWallet[1]}
@@ -954,9 +974,11 @@ async def wallet():
 
     if(isok):
         vWallet = validateWallet(wallet, referido)
-        if(vWallet[0] == 'error'):
+        if(vWallet[0] == 'banned'):
+            returndata = {'response': 'user_wallet_banned'}
+        elif(vWallet[0] == 'error'):
             returndata = {'response': vWallet[1]}
-        if(vWallet[0] == 'notpaid'):
+        elif(vWallet[0] == 'notpaid'):
             returndata = {'response': 'user_wallet_notpaid', "data": vWallet[1]}
         elif vWallet[0] == 'paid':
             returndata = {'response': 'user_wallet_paid', "data": vWallet[1]}
