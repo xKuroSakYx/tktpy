@@ -600,7 +600,7 @@ def validateTwitter(id, username):
                 print('Usuario baneado su valor es %s' % username)
                 return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
 
-        if(vTwitter[0] is not None and vTwitter[0]):
+        if(vTwitter is not None and vTwitter[0]):
             twitterexist = True
             if(vTwitter[0] == 0):
                 twittervalid = True
