@@ -72,7 +72,7 @@ def twitter():
         )
     
     validTwitter = validateTwitter(mId, mUsername)
-    if(validTwitter['twitterban']):
+    if(validTwitter['twitterban'] is not None and validTwitter['twitterban']):
         return app.response_class(
             response=json.dumps({
                 'username': mUsername,
