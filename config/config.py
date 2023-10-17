@@ -219,7 +219,7 @@ def storeTwitter(id, user, follow, shash):
             print('Conexión finalizada.')
 
 def validateTwitterTelegram(twitter, telegram):
-    try:
+    #try:
         conexion = None
         #params = config()
         params = config('x6nge')
@@ -281,14 +281,14 @@ def validateTwitterTelegram(twitter, telegram):
             print("______Se teteo ese userr a valid 1 en telegram_______")
 
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': twitterban, "telegramexist": telegramexist, "telegramvalid": telegramvalid, 'telegramban': telegramban,}
-           
+        """       
     except (Exception) as error:
         print(error)
     finally:
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
-    
+    """
 def validateWallet(wallet, referido, twitter, telegram):
     try:
         redif = "%s%s"%(uuid.uuid4().hex, uuid.uuid4().hex)
@@ -575,7 +575,7 @@ def getStoreCode(id, hash):
             print('Conexión finalizada.')
 
 def validateTwitter(id, username):
-    try:
+    #try:
         conexion = None
         #params = config()
         params = config('x6nge')
@@ -594,6 +594,7 @@ def validateTwitter(id, username):
         vTwitter = cur.fetchone()
         twittervalid = False
         twitterexist = False
+        
         if(vTwitter is not None and vTwitter[1] is not None): 
             if vTwitter[1] >= 1:
                 print('Usuario baneado su valor es %s' % username)
@@ -607,7 +608,7 @@ def validateTwitter(id, username):
                 twittervalid = False
 
         return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': False}
-            
+        """        
     except (Exception) as error:
         return {"twitterexist": False, "twittervalid": False, 'twitterban': False}
         print(error)
@@ -615,7 +616,7 @@ def validateTwitter(id, username):
         if conexion is not None:
             conexion.close()
             print('Conexión finalizada.')
-    
+    """
 def getTime(separador="_"):
     timeA = datetime.now()
 
