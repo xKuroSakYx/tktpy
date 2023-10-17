@@ -131,7 +131,7 @@ def validUserFromDb(username):
         userlist = cur.fetchall()
         for valid in userlist :
             #print("el user valid %s" %(valid))
-            if(valid[2] == 1):
+            if(valid[2] >= 1):
                 return {'response': "user_banned", 'userid': valid[1]}
             elif(valid[0] == 0 and valid[1]):
                 print("el usuario %s esta regisrado en el canal pero no ha recibido los token "% username)
@@ -239,7 +239,7 @@ def validateTwitterTelegram(twitter, telegram):
         twittervalid = False
         twitterexist = False
         twitterban = False
-        if(vTwitter[1] == 1):
+        if(vTwitter[1] >= 1):
             twitterban = True
         elif(vTwitter[0] and vTwitter[0] is not None):
             twitterexist = True
@@ -266,7 +266,7 @@ def validateTwitterTelegram(twitter, telegram):
         telegramvalid = False
         telegramexist = False
         telegramban = False
-        if(vTelegram[1] == 1):
+        if(vTelegram[1] >= 1):
             telegramban = True
         elif(vTelegram[0] and vTelegram[0] is not None):
             telegramexist = True
@@ -315,7 +315,7 @@ def validateWallet(wallet, referido, twitter, telegram):
         walletlist = cur.fetchall()
         for paid, ban in walletlist:
             #print("el user id %s el valid %s"%(userid, valid))
-            if(ban == 1):
+            if(ban >= 1):
                 return ('banned', "wallet %s is banned" % wallet)
             if(paid == 0):
                 print("wallet %s finished the process but has not received the tokens" % wallet)
@@ -387,7 +387,7 @@ def getWallets(basedir, prueva=False):
         with open(filename,"w",encoding='UTF-8') as f:
             writer = csv.writer(f, delimiter=",", lineterminator="\n")
             for wallet, paid, referidos_tot, refpaid, ban in walletlist :
-                if(ban == 1):
+                if(ban >= 1):
                     continue
                 _token = 0
                 _ref_paid = 0
@@ -597,7 +597,7 @@ def validateTwitter(id, username):
         twittervalid = False
         twitterexist = False
         if(vTwitter[1] is not None):
-            if vTwitter[1] == 1:
+            if vTwitter[1] >= 1:
                 return {"twitterexist": twitterexist, "twittervalid": twittervalid, 'twitterban': True}
 
         if(vTwitter[0] and vTwitter[0] is not None):
