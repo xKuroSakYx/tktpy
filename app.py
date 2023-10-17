@@ -58,6 +58,7 @@ async def authcode():
         status=200,
         mimetype='application/json'
     ) 
+
 @app.route("/twitter", methods=["GET"])
 def twitter():
     token = request.args.get('token')
@@ -72,6 +73,7 @@ def twitter():
         )
     
     validTwitter = validateTwitter(mId, mUsername)
+    print('Validater twitter ban es %s'% validTwitter['twitterban'])
     if(validTwitter is not None and validTwitter['twitterban']):
         return app.response_class(
             response=json.dumps({
