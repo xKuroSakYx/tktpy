@@ -520,7 +520,7 @@ async def telegramget():
             
             hash_value = calculate_sha256("%s" % valid['userid'])
             smscode = authCode()
-            message = "Hello @{}, The Key of True telegram user verification code: %s. Visit our main website to stay up to date with the project https://x6nge.io, Twitter: https://x.com/x6nge o Telegram chanel https://t.me/thekeyoftrueTKT to stay up to date with the latest happenings. Thank you for your support." % smscode
+            message = "Hello @{}, The Key of True telegram user verification code: %s." % smscode
             store = storeCode(valid['userid'], smscode, timestamp(), _TIMEMIN_)
 
             try:
