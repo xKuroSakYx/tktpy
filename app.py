@@ -8,7 +8,7 @@ import mysql.connector
 import time
 import csv
 
-from config.config import startConnection, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter, getWallets, getReferidos
+from config.config import startConnection, startConnection2, validateUsername, validUserFromDb, config, calculate_sha256, storeTwitter, validateTwitterTelegram, validateWallet, authCode, timestamp, storeCode, getStoreCode, validateTwitter, getWallets, getReferidos
 
 ######################## TWITTER OAUTH ######################
 from requests_oauthlib import OAuth1Session
@@ -52,7 +52,9 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route("/authcode", methods=["GET"])
 async def authcode():
     client = await startConnection()
+    client2 = await startConnection2()
     await client.disconnect()
+    await client2.disconnect()
     return app.response_class(
         response=json.dumps({'response': 'client ok'}),
         status=200,
@@ -494,12 +496,13 @@ async def telegramget():
     ind = 0
     while 1:
         try:
-            client = await startConnection()
+            client = await startConnection2()
             break
         except:
             time.sleep(0.3)
             ind+=1
         if ind == 100:
+            client = await startConnection()
             break
     
     if ind >= 100:

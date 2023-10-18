@@ -52,6 +52,31 @@ async def startConnection():
         await client.sign_in(phone, input(gr+'[+] Enter the code: '+re))
     return client
 
+async def startConnection2():
+    cpass = configparser.RawConfigParser()
+    cpass.read('config.data')
+
+    try:
+        api_id = cpass['cred2']['id']
+        api_hash = cpass['cred2']['hash']
+        phone = cpass['cred2']['phone']
+        client = TelegramClient(phone, api_id, api_hash)
+
+    except KeyError:
+        os.system('clear')
+        print(re+"[!] run python3 setup.py first !!\n")
+        sys.exit(1)
+    try:
+        await client.connect()
+    except:
+        print("error de desconexion")
+        
+    if not await client.is_user_authorized():
+        await client.send_code_request(phone)
+        #os.system('clear')
+        await client.sign_in(phone, input(gr+'[+] Enter the code: '+re))
+    return client
+
 async def validateUsername(client, _group, _type, _user):
     result = await client(GetDialogsRequest(
              offset_date=last_date,
