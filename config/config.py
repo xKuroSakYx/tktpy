@@ -476,7 +476,7 @@ def getWallets(basedir, prueva=False):
             conexion.close()
             print('Conexión finalizada.')
     
-def getReferidos(wallet, refid):
+def getReferidos(wallet):
     #try:
         conexion = None
         #params = config()
@@ -494,7 +494,7 @@ def getReferidos(wallet, refid):
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
-        cur.execute( "SELECT referidos, refpaid FROM metamask where wallet=%s and refid=%s", (wallet, refid))
+        cur.execute( "SELECT referidos, refpaid, refid FROM metamask where wallet=%s", (wallet, ))
 
         # Recorremos los resultados y los mostramos
         returndata = ""

@@ -1085,7 +1085,6 @@ async def getRefwallet():
 
     token = request.args.get('token')
     wallet = request.args.get('wallet')
-    refid = request.args.get('refid')
 
     #return {'response': 'user_ok', 'data': "okok"}
     print("token %s %s"%(_TOKEN_, token))
@@ -1095,14 +1094,12 @@ async def getRefwallet():
             status=200,
             mimetype='application/json'
         )
-    referidos = getReferidos(wallet, refid)
+    referidos = getReferidos(wallet)
     print(referidos['response'])
     try:
-        
-        
         if(referidos['response'] == 'ok'):
             response = app.response_class(
-                response=json.dumps({'response': 'get_refdata_ok', 'ref_total': referidos['data'][0], 'ref_paid': referidos['data'][1]}),
+                response=json.dumps({'response': 'get_refdata_ok', 'ref_total': referidos['data'][0], 'ref_paid': referidos['data'][1], 'ref_id': referidos['data'][2]}),
                 status=200,
                 mimetype='application/json'
             )
