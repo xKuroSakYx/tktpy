@@ -535,8 +535,12 @@ async def telegramget():
                 #print("[!] Trying to continue...")
             if(store["response"] == "store_code_ok"):
                 returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
+            elif(store["response"] == "store_code_timeout"):
+                returndata = {'response': 'user_timeout', 'segundos': store['segundos']}
+                print("los segundos de menos son %s "%store['segundos'])
             else:
-                returndata = {'response': 'user_timeout'}
+                print("los segundos de menos son %s "% _TIMEMIN_)
+                returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_}
 
         elif valid['response'] == "user_exist":
             returndata = {'response': 'user_exist'}
