@@ -614,21 +614,23 @@ async def telegram():
         message = authCode()
         store = storeCode(valid['userid'], message, timestamp(), _TIMEMIN_)
         
-        try:
-            receiver = await client.get_input_entity(user)
-            await client.send_message(receiver, message.format(user))
-        except PeerFloodError:
-            pass
-            #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
-        except Exception as e:
-            pass
-            #print("[!] Error:", e)
-            #print("[!] Trying to continue...")
         if(store["response"] == "store_code_ok"):
+            try:
+                receiver = await client.get_input_entity(user)
+                await client.send_message(receiver, message.format(user))
+            except PeerFloodError:
+                pass
+                #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
+            except Exception as e:
+                pass
+                #print("[!] Error:", e)
+                #print("[!] Trying to continue...")
             returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
         elif(store["response"] == "store_code_timeout"):
             returndata = {'response': 'user_timeout', 'segundos': store['segundos']}
+            print("los segundos de menos son %s "%store['segundos'])
         else:
+            print("los segundos de menos son %s "% _TIMEMIN_)
             returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_}
 
     elif valid['response'] == "user_exist":
