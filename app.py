@@ -536,7 +536,7 @@ async def telegramget():
             if(store["response"] == "store_code_ok"):
                 returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
             elif(store["response"] == "store_code_timeout"):
-                returndata = {'response': 'user_timeout', 'segundos': store['segundos']}
+                returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_ - store['segundos']}
                 print("los segundos de menos son %s "%store['segundos'])
             else:
                 print("los segundos de menos son %s "% _TIMEMIN_)
