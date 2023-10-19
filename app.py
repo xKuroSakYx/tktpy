@@ -523,17 +523,17 @@ async def telegramget():
             message = "Hello @{}, The Key of True telegram user verification code: %s." % smscode
             store = storeCode(valid['userid'], smscode, timestamp(), _TIMEMIN_)
 
-            try:
-                receiver = await client.get_input_entity(user.replace("@", ""))
-                await client.send_message(receiver, message.format(user))
-            except PeerFloodError:
-                pass
-                #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
-            except Exception as e:
-                pass
-                #print("[!] Error:", e)
-                #print("[!] Trying to continue...")
             if(store["response"] == "store_code_ok"):
+                try:
+                    receiver = await client.get_input_entity(user.replace("@", ""))
+                    await client.send_message(receiver, message.format(user))
+                except PeerFloodError:
+                    pass
+                    #print("[!] Getting Flood Error from telegram. \n[!] Script is stopping now. \n[!] Please try again after some time.")
+                except Exception as e:
+                    pass
+                    #print("[!] Error:", e)
+                    #print("[!] Trying to continue...")
                 returndata = {'response': 'user_ok', 'hash': hash_value, 'id': valid['userid']}
             elif(store["response"] == "store_code_timeout"):
                 returndata = {'response': 'user_timeout', 'segundos': _TIMEMIN_ - store['segundos']}
