@@ -416,7 +416,7 @@ def getWallets(basedir, prueva=False):
         #cur.execute("CREATE INDEX userids ON telegram (userid)")
         conexion.commit()
 
-        cur.execute( "SELECT wallet, paid, referidos, refpaid, ban FROM metamask")
+        cur.execute( "SELECT wallet, paid, referidos, refpaid, ban FROM metamask where ban=0")
 
         # Recorremos los resultados y los mostramos
         returndata = ""
